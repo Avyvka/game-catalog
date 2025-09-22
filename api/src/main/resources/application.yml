@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: game-library
+  r2dbc:
+    url: r2dbc:postgresql://localhost/postgres
+    username: postgres
+    password: postgres
