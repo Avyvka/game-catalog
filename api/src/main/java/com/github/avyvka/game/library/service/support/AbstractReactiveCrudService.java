@@ -5,8 +5,6 @@ import com.github.avyvka.game.library.repository.api.CustomR2dbcRepository;
 import com.github.avyvka.game.library.service.api.ReactiveCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -40,7 +38,7 @@ public abstract class AbstractReactiveCrudService<E, D, ID> implements ReactiveC
 
     @Override
     public Flux<D> findAll(Pageable pageable) {
-        return repository.findAllBy(pageable).map(mapper::toDto);
+        return repository.findAll(pageable).map(mapper::toDto);
     }
 
     @Override

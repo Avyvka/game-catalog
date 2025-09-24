@@ -8,5 +8,5 @@ import reactor.core.publisher.Flux;
 @NoRepositoryBean
 public interface CustomR2dbcRepository<E, ID> extends R2dbcRepository<E, ID> {
 
-    Flux<E> findAllBy(Pageable pageable);
+    Flux<E> findAll(Pageable pageable);
 }

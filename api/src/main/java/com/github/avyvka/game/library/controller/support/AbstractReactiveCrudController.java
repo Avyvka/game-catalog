@@ -20,6 +20,7 @@ public abstract class AbstractReactiveCrudController<D, ID> implements ReactiveC
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Mono<D> create(@Validated @RequestBody Mono<D> dto) {
         return service.create(dto);
     }
@@ -36,23 +37,45 @@ public abstract class AbstractReactiveCrudController<D, ID> implements ReactiveC
                 );
     }
 
-    @GetMapping
+    @GetMapping({"", "/"})
     public Flux<D> getAll(@PageableDefault(size = 20) Pageable pageable) {
         return service.findAll(pageable);
     }
 
     @PutMapping("/{id}")
     public Mono<D> update(@PathVariable ID id, @Validated @RequestBody Mono<D> dto) {
-        return service.update(id, dto);
+        return service.update(id, dto)
+                .switchIfEmpty(
+                        Mono.error(
+                                new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND, "Entity with ID " + id + " not found."
+                                )
+                        )
+                );
     }
 
     @PatchMapping("/{id}")
     public Mono<D> partialUpdate(@PathVariable ID id, @Validated @RequestBody Mono<D> dto) {
-        return service.partialUpdate(id, dto);
+        return service.partialUpdate(id, dto)
+                .switchIfEmpty(
+                        Mono.error(
+                                new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND, "Entity with ID " + id + " not found."
+                                )
+                        )
+                );
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> delete(@PathVariable ID id) {
-        return service.delete(id);
+        return service.delete(id)
+                .switchIfEmpty(
+                        Mono.error(
+                                new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND, "Entity with ID " + id + " not found."
+                                )
+                        )
+                );
     }
 }
