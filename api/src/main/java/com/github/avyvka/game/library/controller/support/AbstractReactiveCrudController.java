@@ -2,10 +2,10 @@ package com.github.avyvka.game.library.controller.support;
 
 import com.github.avyvka.game.library.controller.api.ReactiveCrudController;
 import com.github.avyvka.game.library.service.api.ReactiveCrudService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
@@ -21,7 +21,7 @@ public abstract class AbstractReactiveCrudController<D, ID> implements ReactiveC
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<D> create(@Validated @RequestBody Mono<D> dto) {
+    public Mono<D> create(@Valid @RequestBody Mono<D> dto) {
         return service.create(dto);
     }
 
@@ -43,7 +43,7 @@ public abstract class AbstractReactiveCrudController<D, ID> implements ReactiveC
     }
 
     @PutMapping("/{id}")
-    public Mono<D> update(@PathVariable ID id, @Validated @RequestBody Mono<D> dto) {
+    public Mono<D> update(@PathVariable ID id, @Valid @RequestBody Mono<D> dto) {
         return service.update(id, dto)
                 .switchIfEmpty(
                         Mono.error(
@@ -55,7 +55,7 @@ public abstract class AbstractReactiveCrudController<D, ID> implements ReactiveC
     }
 
     @PatchMapping("/{id}")
-    public Mono<D> partialUpdate(@PathVariable ID id, @Validated @RequestBody Mono<D> dto) {
+    public Mono<D> partialUpdate(@PathVariable ID id, @Valid @RequestBody Mono<D> dto) {
         return service.partialUpdate(id, dto)
                 .switchIfEmpty(
                         Mono.error(
