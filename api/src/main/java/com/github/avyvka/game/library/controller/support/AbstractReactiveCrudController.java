@@ -69,13 +69,6 @@ public abstract class AbstractReactiveCrudController<D, ID> implements ReactiveC
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> delete(@PathVariable ID id) {
-        return service.delete(id)
-                .switchIfEmpty(
-                        Mono.error(
-                                new ResponseStatusException(
-                                        HttpStatus.NOT_FOUND, "Entity with ID " + id + " not found."
-                                )
-                        )
-                );
+        return service.delete(id);
     }
 }
