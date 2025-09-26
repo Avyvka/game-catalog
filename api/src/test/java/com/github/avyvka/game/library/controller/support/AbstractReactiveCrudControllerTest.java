@@ -26,9 +26,9 @@ class AbstractReactiveCrudControllerTest {
 
     record TestDto(UUID id) {}
 
-    private final UUID id = UUID.randomUUID();
+    private final UUID testId = UUID.randomUUID();
 
-    private final TestDto testDto = new TestDto(id);
+    private final TestDto testDto = new TestDto(testId);
 
     @Configuration
     static class TestControllerConfiguration {
@@ -67,10 +67,10 @@ class AbstractReactiveCrudControllerTest {
 
     @Test
     void getById_ShouldReturnEntity_WhenFound() {
-        when(service.findById(id)).thenReturn(Mono.just(testDto));
+        when(service.findById(testId)).thenReturn(Mono.just(testDto));
 
         webClient.get()
-                .uri("/api/v1/test/{id}", id)
+                .uri("/api/v1/test/{id}", testId)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(TestDto.class)
@@ -79,10 +79,10 @@ class AbstractReactiveCrudControllerTest {
 
     @Test
     void getById_ShouldReturnNotFound_WhenEmpty() {
-        when(service.findById(id)).thenReturn(Mono.empty());
+        when(service.findById(testId)).thenReturn(Mono.empty());
 
         webClient.get()
-                .uri("/api/v1/test/{id}", id)
+                .uri("/api/v1/test/{id}", testId)
                 .exchange()
                 .expectStatus().isNotFound();
     }
@@ -113,10 +113,10 @@ class AbstractReactiveCrudControllerTest {
 
     @Test
     void update_ShouldReturnUpdatedEntity_WhenFound() {
-        when(service.update(eq(id), any())).thenReturn(Mono.just(testDto));
+        when(service.update(eq(testId), any())).thenReturn(Mono.just(testDto));
 
         webClient.put()
-                .uri("/api/v1/test/{id}", id)
+                .uri("/api/v1/test/{id}", testId)
                 .bodyValue(testDto)
                 .exchange()
                 .expectStatus().isOk()
@@ -126,10 +126,10 @@ class AbstractReactiveCrudControllerTest {
 
     @Test
     void update_ShouldReturnNotFound_WhenEntityMissing() {
-        when(service.update(eq(id), any())).thenReturn(Mono.empty());
+        when(service.update(eq(testId), any())).thenReturn(Mono.empty());
 
         webClient.put()
-                .uri("/api/v1/test/{id}", id)
+                .uri("/api/v1/test/{id}", testId)
                 .bodyValue(testDto)
                 .exchange()
                 .expectStatus().isNotFound();
@@ -137,10 +137,10 @@ class AbstractReactiveCrudControllerTest {
 
     @Test
     void partialUpdate_ShouldReturnPatchedEntity_WhenFound() {
-        when(service.partialUpdate(eq(id), any())).thenReturn(Mono.just(testDto));
+        when(service.partialUpdate(eq(testId), any())).thenReturn(Mono.just(testDto));
 
         webClient.patch()
-                .uri("/api/v1/test/{id}", id)
+                .uri("/api/v1/test/{id}", testId)
                 .bodyValue(testDto)
                 .exchange()
                 .expectStatus().isOk()
@@ -150,10 +150,10 @@ class AbstractReactiveCrudControllerTest {
 
     @Test
     void partialUpdate_ShouldReturnNotFound_WhenEntityMissing() {
-        when(service.partialUpdate(eq(id), any())).thenReturn(Mono.empty());
+        when(service.partialUpdate(eq(testId), any())).thenReturn(Mono.empty());
 
         webClient.patch()
-                .uri("/api/v1/test/{id}", id)
+                .uri("/api/v1/test/{id}", testId)
                 .bodyValue(testDto)
                 .exchange()
                 .expectStatus().isNotFound();
@@ -161,20 +161,20 @@ class AbstractReactiveCrudControllerTest {
 
     @Test
     void delete_ShouldReturnNoContent_WhenDeleted() {
-        when(service.delete(id)).thenReturn(Mono.empty());
+        when(service.delete(testId)).thenReturn(Mono.empty());
 
         webClient.delete()
-                .uri("/api/v1/test/{id}", id)
+                .uri("/api/v1/test/{id}", testId)
                 .exchange()
                 .expectStatus().isNoContent();
     }
 
     @Test
     void delete_ShouldReturnNotFound_WhenEntityMissing() {
-        when(service.delete(id)).thenReturn(Mono.empty());
+        when(service.delete(testId)).thenReturn(Mono.empty());
 
         webClient.delete()
-                .uri("/api/v1/test/{id}", id)
+                .uri("/api/v1/test/{id}", testId)
                 .exchange()
                 .expectStatus().isNoContent();
     }
