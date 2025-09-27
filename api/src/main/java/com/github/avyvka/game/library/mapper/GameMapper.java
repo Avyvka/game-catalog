@@ -1,8 +1,7 @@
 package com.github.avyvka.game.library.mapper;
 
 import com.github.avyvka.game.library.mapper.api.EntityDtoMapper;
-import com.github.avyvka.game.library.model.dto.PlatformDto;
-import com.github.avyvka.game.library.model.entity.PlatformEntity;
+import com.github.avyvka.game.library.model.entity.GameEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
@@ -11,5 +10,5 @@ import org.mapstruct.ReportingPolicy;
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
-public interface PlatformMapper extends EntityDtoMapper<PlatformEntity, PlatformDto> {
+public interface GameMapper extends EntityDtoMapper<GameEntity, GameEntity> {
 }

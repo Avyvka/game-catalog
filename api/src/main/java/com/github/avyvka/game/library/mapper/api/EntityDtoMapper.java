@@ -1,4 +1,4 @@
-package com.github.avyvka.game.library.mapper;
+package com.github.avyvka.game.library.mapper.api;
 
 import org.mapstruct.*;
 

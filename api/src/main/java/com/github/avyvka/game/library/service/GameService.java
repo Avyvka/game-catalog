@@ -1,7 +1,9 @@
 package com.github.avyvka.game.library.service;
 
 import com.github.avyvka.game.library.mapper.api.EntityDtoMapper;
+import com.github.avyvka.game.library.model.dto.GameDto;
 import com.github.avyvka.game.library.model.dto.PlatformDto;
+import com.github.avyvka.game.library.model.entity.GameEntity;
 import com.github.avyvka.game.library.model.entity.PlatformEntity;
 import com.github.avyvka.game.library.repository.api.CustomR2dbcRepository;
 import com.github.avyvka.game.library.service.support.AbstractReactiveCrudService;
@@ -11,12 +13,12 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class PlatformService extends AbstractReactiveCrudService<PlatformEntity, PlatformDto, UUID> {
+public class GameService extends AbstractReactiveCrudService<GameEntity, GameDto, UUID> {
 
     @Autowired
-    protected PlatformService(
-            CustomR2dbcRepository<PlatformEntity, UUID> repository,
-            EntityDtoMapper<PlatformEntity, PlatformDto> mapper
+    protected GameService(
+            CustomR2dbcRepository<GameEntity, UUID> repository,
+            EntityDtoMapper<GameEntity, GameDto> mapper
     ) {
         super(repository, mapper);
     }

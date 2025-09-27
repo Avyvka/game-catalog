@@ -1,6 +1,6 @@
 package com.github.avyvka.game.library.service.support;
 
-import com.github.avyvka.game.library.mapper.EntityDtoMapper;
+import com.github.avyvka.game.library.mapper.api.EntityDtoMapper;
 import com.github.avyvka.game.library.repository.api.CustomR2dbcRepository;
 import com.github.avyvka.game.library.service.api.ReactiveCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
