@@ -1,4 +1,4 @@
 databaseChangeLog:
   - include:
-      file: changes/01-create-platform-table.yaml
+      file: changes/01-create-initial-tables.yaml
       relativeToChangelogFile: true

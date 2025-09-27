@@ -1,0 +1,158 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01-create-tables
+      author: avyvka
+      changes:
+        - createTable:
+            tableName: platform
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: manufacturer
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: developer
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: description
+                  type: text
+        - createTable:
+            tableName: genre
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+                    unique: true
+        - createTable:
+            tableName: game
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: developer_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: game_platform
+            columns:
+              - column:
+                  name: game_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: platform_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: game_genre
+            columns:
+              - column:
+                  name: game_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: genre_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 02-add-foreign-key
+      author: avyvka
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: game
+            baseColumnNames: developer_id
+            referencedTableName: developer
+            referencedColumnNames: id
+            constraintName: fk_game_developer_id
+        - addForeignKeyConstraint:
+            baseTableName: game_platform
+            baseColumnNames: game_id
+            referencedTableName: game
+            referencedColumnNames: id
+            constraintName: fk_game_platform_game_id
+        - addForeignKeyConstraint:
+            baseTableName: game_platform
+            baseColumnNames: platform_id
+            referencedTableName: platform
+            referencedColumnNames: id
+            constraintName: fk_game_platform_platform_id
+        - addForeignKeyConstraint:
+            baseTableName: game_genre
+            baseColumnNames: game_id
+            referencedTableName: game
+            referencedColumnNames: id
+            constraintName: fk_game_genre_game_id
+        - addForeignKeyConstraint:
+            baseTableName: game_genre
+            baseColumnNames: genre_id
+            referencedTableName: genre
+            referencedColumnNames: id
+            constraintName: fk_game_genre_genre_id
+  - changeSet:
+      id: 03-create-index
+      author: avyvka
+      changes:
+        - createIndex:
+            tableName: game_genre
+            unique: true
+            columns:
+              - column:
+                  name: game_id
+              - column:
+                  name: genre_id
+        - createIndex:
+            tableName: game_platform
+            unique: true
+            columns:
+              - column:
+                  name: game_id
+              - column:
+                  name: platform_id
