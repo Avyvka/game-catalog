@@ -12,4 +12,20 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface GenreMapper extends EntityDtoMapper<GenreEntity, GenreDto> {
+
+    @Override
+    default GenreEntity update(GenreEntity entity, GenreDto dto) {
+        return (dto == null) ? null : new GenreEntity(
+                entity.id(),
+                dto.name()
+        );
+    }
+
+    @Override
+    default GenreEntity partialUpdate(GenreEntity entity, GenreDto dto) {
+        return (dto == null) ? null : new GenreEntity(
+                entity.id(),
+                dto.name() != null ? dto.name() : entity.name()
+        );
+    }
 }

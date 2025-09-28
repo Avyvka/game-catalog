@@ -12,4 +12,22 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface DeveloperMapper extends EntityDtoMapper<DeveloperEntity, DeveloperDto> {
+
+    @Override
+    default DeveloperEntity update(DeveloperEntity entity, DeveloperDto dto) {
+        return (dto == null) ? null : new DeveloperEntity(
+                entity.id(),
+                dto.name(),
+                dto.description()
+        );
+    }
+
+    @Override
+    default DeveloperEntity partialUpdate(DeveloperEntity entity, DeveloperDto dto) {
+        return (dto == null) ? null : new DeveloperEntity(
+                entity.id(),
+                dto.name() != null ? dto.name() : entity.name(),
+                dto.description() != null ? dto.description() : entity.description()
+        );
+    }
 }
