@@ -1,7 +1,6 @@
 package com.github.avyvka.game.catalog.repository;
 
 import com.github.avyvka.game.catalog.model.entity.DeveloperEntity;
-import com.github.avyvka.game.catalog.model.entity.PlatformEntity;
 import com.github.avyvka.game.catalog.repository.api.CustomR2dbcRepository;
 import org.springframework.stereotype.Repository;
 

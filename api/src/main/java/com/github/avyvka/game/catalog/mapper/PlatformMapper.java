@@ -1,9 +1,7 @@
 package com.github.avyvka.game.catalog.mapper;
 
 import com.github.avyvka.game.catalog.mapper.api.EntityDtoMapper;
-import com.github.avyvka.game.catalog.model.dto.DeveloperDto;
 import com.github.avyvka.game.catalog.model.dto.PlatformDto;
-import com.github.avyvka.game.catalog.model.entity.DeveloperEntity;
 import com.github.avyvka.game.catalog.model.entity.PlatformEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
