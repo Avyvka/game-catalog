@@ -55,7 +55,7 @@ public abstract class AbstractReactiveCrudController<D, ID> implements ReactiveC
     }
 
     @PatchMapping("/{id}")
-    public Mono<D> partialUpdate(@PathVariable ID id, @Valid @RequestBody Mono<D> dto) {
+    public Mono<D> partialUpdate(@PathVariable ID id, @RequestBody Mono<D> dto) {
         return service.partialUpdate(id, dto)
                 .switchIfEmpty(
                         Mono.error(

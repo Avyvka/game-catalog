@@ -24,7 +24,7 @@ public interface ReactiveCrudController<D, ID> {
     Mono<D> update(@PathVariable ID id, @Valid @RequestBody Mono<D> dto);
 
     @PatchMapping("/{id}")
-    Mono<D> partialUpdate(@PathVariable ID id, @Valid @RequestBody Mono<D> dto);
+    Mono<D> partialUpdate(@PathVariable ID id, @RequestBody Mono<D> dto);
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
