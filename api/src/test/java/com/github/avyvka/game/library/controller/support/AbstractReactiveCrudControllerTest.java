@@ -1,7 +1,7 @@
-package com.github.avyvka.game.library.controller.support;
+package com.github.avyvka.game.catalog.controller.support;
 
-import com.github.avyvka.game.library.config.WebConfig;
-import com.github.avyvka.game.library.service.api.ReactiveCrudService;
+import com.github.avyvka.game.catalog.config.WebConfig;
+import com.github.avyvka.game.catalog.service.api.ReactiveCrudService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;

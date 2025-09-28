@@ -1,4 +1,4 @@
-package com.github.avyvka.game.library;
+package com.github.avyvka.game.catalog;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

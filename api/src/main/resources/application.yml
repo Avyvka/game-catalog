@@ -1,6 +1,6 @@
 spring:
   application:
-    name: game-library
+    name: game-catalog
   r2dbc:
     url: r2dbc:postgresql://localhost/postgres
     username: postgres
