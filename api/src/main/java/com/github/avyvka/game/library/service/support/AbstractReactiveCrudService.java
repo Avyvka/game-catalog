@@ -42,17 +42,17 @@ public abstract class AbstractReactiveCrudService<E, D, ID> implements ReactiveC
     }
 
     @Override
-    public Mono<D> update(ID id, Mono<D> dtoMono) {
+    public Mono<D> update(ID id, Mono<D> dto) {
         return repository.findById(id)
-                .zipWith(dtoMono, mapper::update)
+                .zipWith(dto, mapper::update)
                 .flatMap(repository::save)
                 .map(mapper::toDto);
     }
 
     @Override
-    public Mono<D> partialUpdate(ID id, Mono<D> dtoMono) {
+    public Mono<D> partialUpdate(ID id, Mono<D> dto) {
         return repository.findById(id)
-                .zipWith(dtoMono, mapper::partialUpdate)
+                .zipWith(dto, mapper::partialUpdate)
                 .flatMap(repository::save)
                 .map(mapper::toDto);
     }
