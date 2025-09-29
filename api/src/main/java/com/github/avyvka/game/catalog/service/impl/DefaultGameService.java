@@ -54,19 +54,13 @@ public class DefaultGameService
 
     @Override
     @Transactional
-    public Mono<GameDto> create(Mono<GameDto> dto) {
-        return dto.flatMap(this::create)
-                .flatMap(saved -> findById(saved.id()));
-    }
-
-    private Mono<GameDto> create(GameDto dto) {
-        return super.create(Mono.just(dto))
-                .flatMap(savedGame ->
-                        saveGameGenres(savedGame.id(), dto.genres()).thenReturn(savedGame)
-                )
-                .flatMap(savedGame ->
-                        saveGamePlatforms(savedGame.id(), dto.platforms()).thenReturn(savedGame)
-                );
+    public Mono<GameDto> create(Mono<GameDto> dtoMono) {
+        return dtoMono.flatMap(dto ->
+                super.create(Mono.just(dto))
+                        .delayUntil(saved -> saveGameGenres(saved.id(), dto.genres()))
+                        .delayUntil(saved -> saveGamePlatforms(saved.id(), dto.platforms()))
+                        .flatMap(saved -> this.findById(saved.id()))
+        );
     }
 
     @Override
@@ -93,32 +87,28 @@ public class DefaultGameService
 
     @Override
     @Transactional
-    public Mono<GameDto> update(UUID uuid, Mono<GameDto> dto) {
-        return dto.flatMap(gameDto -> this.update(uuid, gameDto))
-                .then(findById(uuid));
-    }
-
-    private Mono<Void> update(UUID uuid, GameDto dto) {
-        return super.update(uuid, Mono.just(dto))
-                .then(gameGenreRepository.deleteAllByGameId(uuid))
-                .then(saveGameGenres(uuid, dto.genres()))
-                .then(gamePlatformRepository.deleteAllByGameId(uuid))
-                .then(saveGamePlatforms(uuid, dto.platforms()));
+    public Mono<GameDto> update(UUID uuid, Mono<GameDto> dtoMono) {
+        return dtoMono.flatMap(dto ->
+                super.update(uuid, Mono.just(dto))
+                        .delayUntil(e -> gameGenreRepository.deleteAllByGameId(uuid))
+                        .delayUntil(e -> saveGameGenres(uuid, dto.genres()))
+                        .delayUntil(e -> gamePlatformRepository.deleteAllByGameId(uuid))
+                        .delayUntil(e -> saveGamePlatforms(uuid, dto.platforms()))
+                        .flatMap(e -> this.findById(e.id()))
+        );
     }
 
     @Override
     @Transactional
-    public Mono<GameDto> partialUpdate(UUID uuid, Mono<GameDto> dto) {
-        return dto.flatMap(gameDto -> this.partialUpdate(uuid, gameDto))
-                .then(findById(uuid));
-    }
-
-    private Mono<Void> partialUpdate(UUID uuid, GameDto dto) {
-        return super.partialUpdate(uuid, Mono.just(dto))
-                .then(gameGenreRepository.deleteAllByGameId(uuid))
-                .then(saveGameGenres(uuid, dto.genres()))
-                .then(gamePlatformRepository.deleteAllByGameId(uuid))
-                .then(saveGamePlatforms(uuid, dto.platforms()));
+    public Mono<GameDto> partialUpdate(UUID uuid, Mono<GameDto> dtoMono) {
+        return dtoMono.flatMap(dto ->
+                super.partialUpdate(uuid, Mono.just(dto))
+                        .delayUntil(e -> gameGenreRepository.deleteAllByGameId(uuid))
+                        .delayUntil(e -> saveGameGenres(uuid, dto.genres()))
+                        .delayUntil(e -> gamePlatformRepository.deleteAllByGameId(uuid))
+                        .delayUntil(e -> saveGamePlatforms(uuid, dto.platforms()))
+                        .flatMap(e -> this.findById(e.id()))
+        );
     }
 
     private Mono<Void> saveGameGenres(UUID gameId, @Nullable Collection<GenreDto> genres) {
