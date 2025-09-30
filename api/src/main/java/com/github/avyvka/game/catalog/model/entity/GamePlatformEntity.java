@@ -7,6 +7,6 @@ import java.util.UUID;
 @Table("game_platform")
 public record GamePlatformEntity(
         UUID gameId,
-        UUID genreId
+        UUID platformId
 ) {
 }

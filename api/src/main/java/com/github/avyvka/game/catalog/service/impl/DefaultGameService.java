@@ -15,7 +15,6 @@ import com.github.avyvka.game.catalog.repository.GameRepository;
 import com.github.avyvka.game.catalog.service.GameService;
 import com.github.avyvka.game.catalog.service.support.AbstractReactiveCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
@@ -26,8 +25,7 @@ import java.util.UUID;
 @Service
 public class DefaultGameService
         extends AbstractReactiveCrudService<GameEntity, GameDto, UUID>
-        implements GameService
-{
+        implements GameService {
     private final GameGenreRepository gameGenreRepository;
 
     private final GamePlatformRepository gamePlatformRepository;
@@ -55,12 +53,20 @@ public class DefaultGameService
     @Override
     @Transactional
     public Mono<GameDto> create(Mono<GameDto> dtoMono) {
-        return dtoMono.flatMap(dto ->
-                super.create(Mono.just(dto))
-                        .delayUntil(saved -> saveGameGenres(saved.id(), dto.genres()))
-                        .delayUntil(saved -> saveGamePlatforms(saved.id(), dto.platforms()))
-                        .flatMap(saved -> this.findById(saved.id()))
-        );
+        return dtoMono.zipWhen(dto -> super.create(Mono.just(dto)))
+                .flatMap(tuple -> {
+                    var source = tuple.getT1();
+                    var saved = tuple.getT2();
+
+                    var saveGenres = Mono.justOrEmpty(source.genres())
+                            .flatMap(genres -> saveGameGenres(saved.id(), genres));
+
+                    var savePlatforms = Mono.justOrEmpty(source.platforms())
+                            .flatMap(platforms -> saveGamePlatforms(saved.id(), platforms));
+
+                    return Mono.when(saveGenres, savePlatforms).thenReturn(saved.id());
+                })
+                .flatMap(this::findById);
     }
 
     @Override
@@ -88,34 +94,54 @@ public class DefaultGameService
     @Override
     @Transactional
     public Mono<GameDto> update(UUID uuid, Mono<GameDto> dtoMono) {
-        return dtoMono.flatMap(dto ->
-                super.update(uuid, Mono.just(dto))
-                        .delayUntil(e -> gameGenreRepository.deleteAllByGameId(uuid))
-                        .delayUntil(e -> saveGameGenres(uuid, dto.genres()))
-                        .delayUntil(e -> gamePlatformRepository.deleteAllByGameId(uuid))
-                        .delayUntil(e -> saveGamePlatforms(uuid, dto.platforms()))
-                        .flatMap(e -> this.findById(e.id()))
-        );
+        return dtoMono.zipWhen(dto -> super.update(uuid, Mono.just(dto)))
+                .flatMap(tuple -> {
+                    var dto = tuple.getT1();
+
+                    var updateGenres = gameGenreRepository.deleteAllByGameId(uuid)
+                            .then(Mono.justOrEmpty(dto.genres())
+                                    .flatMap(genres -> saveGameGenres(uuid, genres))
+                            );
+
+                    var updatePlatforms = gamePlatformRepository.deleteAllByGameId(uuid)
+                            .then(Mono.justOrEmpty(dto.platforms())
+                                    .flatMap(platforms -> saveGamePlatforms(uuid, platforms))
+                            );
+
+                    return Mono.when(updateGenres, updatePlatforms);
+                })
+                .then(this.findById(uuid));
     }
 
     @Override
     @Transactional
     public Mono<GameDto> partialUpdate(UUID uuid, Mono<GameDto> dtoMono) {
-        return dtoMono.flatMap(dto ->
-                super.partialUpdate(uuid, Mono.just(dto))
-                        .delayUntil(e -> gameGenreRepository.deleteAllByGameId(uuid))
-                        .delayUntil(e -> saveGameGenres(uuid, dto.genres()))
-                        .delayUntil(e -> gamePlatformRepository.deleteAllByGameId(uuid))
-                        .delayUntil(e -> saveGamePlatforms(uuid, dto.platforms()))
-                        .flatMap(e -> this.findById(e.id()))
-        );
+        return dtoMono.zipWhen(dto -> super.partialUpdate(uuid, Mono.just(dto)))
+                .flatMap(tuple -> {
+                    var dto = tuple.getT1();
+
+                    var updateGenres = Mono.justOrEmpty(dto.genres())
+                            .delayUntil(_ -> gameGenreRepository.deleteAllByGameId(uuid))
+                            .flatMap(genres -> saveGameGenres(uuid, genres));
+
+                    var updatePlatforms = Mono.justOrEmpty(dto.platforms())
+                            .delayUntil(_ -> gamePlatformRepository.deleteAllByGameId(uuid))
+                            .flatMap(platforms -> saveGamePlatforms(uuid, platforms));
+
+                    return Mono.when(updateGenres, updatePlatforms);
+                })
+                .then(this.findById(uuid));
     }
 
-    private Mono<Void> saveGameGenres(UUID gameId, @Nullable Collection<GenreDto> genres) {
-        if (genres == null) {
-            return Mono.empty();
-        }
+    @Override
+    @Transactional
+    public Mono<Void> delete(UUID uuid) {
+        return gameGenreRepository.deleteAllByGameId(uuid)
+                .then(gamePlatformRepository.deleteAllByGameId(uuid))
+                .then(super.delete(uuid));
+    }
 
+    private Mono<Void> saveGameGenres(UUID gameId, Collection<GenreDto> genres) {
         var gameGenres = genres.stream()
                 .map(genre -> new GameGenreEntity(gameId, genre.id()))
                 .toList();
@@ -123,11 +149,7 @@ public class DefaultGameService
         return gameGenreRepository.saveAll(gameGenres).then();
     }
 
-    private Mono<Void> saveGamePlatforms(UUID gameId, @Nullable Collection<PlatformDto> platforms) {
-        if (platforms == null) {
-            return Mono.empty();
-        }
-
+    private Mono<Void> saveGamePlatforms(UUID gameId, Collection<PlatformDto> platforms) {
         var gamePlatforms = platforms.stream()
                 .map(platform -> new GamePlatformEntity(gameId, platform.id()))
                 .toList();
