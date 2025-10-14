@@ -27,25 +27,13 @@ import {
   IconDotsVertical,
   IconLogout,
   IconPhotoUp} from '@tabler/icons-react';
-import { SignOutButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
 import { NavItem } from '@/types';
-export const company = {
-  name: 'Acme Inc',
-  logo: IconPhotoUp,
-  plan: 'Enterprise'
-};
 
-const tenants = [
-  { id: '1', name: 'Acme Inc' },
-  { id: '2', name: 'Beta Corp' },
-  { id: '3', name: 'Gamma Ltd' }
-];
-
-export const navItems: NavItem[] = [
+const navItems: NavItem[] = [
   { title: 'Game', url: '/dashboard/game', icon: 'dice2' },
   { title: 'Developer', url: '/dashboard/developer', icon: 'userCode' },
   { title: 'Genre', url: '/dashboard/genre', icon: 'sphere' },
@@ -54,22 +42,11 @@ export const navItems: NavItem[] = [
 
 export default function AppSidebar() {
   const pathname = usePathname();
-  const { isOpen } = useMediaQuery();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const user = session?.user;
-  const router = useRouter();
-  const handleSwitchTenant = (_tenantId: string) => {
-    // Tenant switching functionality would be implemented here
-  };
-
-  const activeTenant = tenants[0];
-
-  React.useEffect(() => {
-    // Side effects based on sidebar state changes
-  }, [isOpen]);
 
   return (
-    <Sidebar collapsible='icon'>
+    <Sidebar collapsible="icon" variant="inset">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -90,7 +67,7 @@ export default function AppSidebar() {
           <SidebarGroupLabel>Overview</SidebarGroupLabel>
           <SidebarMenu>
             {navItems.map((item) => {
-              const Icon = Icons[item.icon];
+              const Icon = item.icon ? Icons[item.icon] : undefined;
               return (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
@@ -99,7 +76,7 @@ export default function AppSidebar() {
                     isActive={pathname === item.url}
                   >
                     <Link href={item.url}>
-                      {item.icon && <Icon />}
+                      {Icon && <Icon />}
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -148,7 +125,7 @@ export default function AppSidebar() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <IconLogout className='mr-2 h-4 w-4' />
-                  <SignOutButton redirectUrl='/auth/sign-in' />
+                  {/* <SignOutButton redirectUrl='/auth/sign-in' /> */}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

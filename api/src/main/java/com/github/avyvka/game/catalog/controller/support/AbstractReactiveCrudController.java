@@ -37,7 +37,7 @@ public abstract class AbstractReactiveCrudController<D, ID> implements ReactiveC
                 );
     }
 
-    @GetMapping({"", "/"})
+    @GetMapping
     public Flux<D> getAll(@PageableDefault(size = 20) Pageable pageable) {
         return service.findAll(pageable);
     }

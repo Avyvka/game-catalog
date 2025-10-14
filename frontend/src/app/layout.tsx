@@ -12,7 +12,7 @@ import './theme.css';
 
 const META_THEME_COLORS = {
   light: '#ffffff',
-  dark: '#09090b'
+  dark: 'blue' //'#09090b'
 };
 
 export const metadata: Metadata = {

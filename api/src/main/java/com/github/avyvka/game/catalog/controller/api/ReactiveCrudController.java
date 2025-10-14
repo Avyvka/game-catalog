@@ -17,7 +17,7 @@ public interface ReactiveCrudController<D, ID> {
     @GetMapping("/{id}")
     Mono<D> getById(@PathVariable ID id);
 
-    @GetMapping({"", "/"})
+    @GetMapping
     Flux<D> getAll(@PageableDefault(size = 20) Pageable pageable);
 
     @PutMapping("/{id}")

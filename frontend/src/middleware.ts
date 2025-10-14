@@ -2,10 +2,10 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
 export default auth((req) => {
-  if (!req.auth) {
+  if (!req.auth || req.auth.error) {
     return NextResponse.redirect(
       new URL(
-        `api/auth/signin?callbackUrl=${encodeURIComponent(req.url)}`,
+        `/api/auth/signin?callbackUrl=${encodeURIComponent(req.url)}`,
         req.url,
       ),
     );
