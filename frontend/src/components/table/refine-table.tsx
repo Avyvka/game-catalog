@@ -36,7 +36,7 @@ export function RefineTable({
     reactTable: {
       getHeaderGroups,
       getAllColumns,
-      getCoreRowModel,
+      getSortedRowModel,
       getRowModel,
       getState,
       setPageSize,
@@ -60,7 +60,14 @@ export function RefineTable({
             {getHeaderGroups().map((hg) => (
               <TableRow key={hg.id}>
                 {hg.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: header.column.columnDef.size !== -1
+                        ? `${header.column.columnDef.size}px`
+                        : "auto"
+                    }}
+                  >
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext()
@@ -73,7 +80,7 @@ export function RefineTable({
           <TableBody>
             {isLoading ? (
               <SkeletonRows rows={3} columns={getAllColumns().length} />
-            ) : getCoreRowModel().rows?.length ? (
+            ) : getSortedRowModel().rows?.length ? (
               getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
@@ -114,9 +121,7 @@ export function RefineTable({
               disabled={isLoading}
             >
               <SelectTrigger size='sm' className='w-20' id='rows-per-page'>
-                <SelectValue
-                  placeholder={getState().pagination.pageSize}
-                />
+                <SelectValue placeholder={getState().pagination.pageSize} />
               </SelectTrigger>
               <SelectContent side='top'>
                 {[10, 20, 30, 40, 50].map((pageSize) => (
@@ -128,8 +133,7 @@ export function RefineTable({
             </Select>
           </div>
           <div className='flex w-fit items-center justify-center text-sm font-medium'>
-            Page {getState().pagination.pageIndex + 1} of{" "}
-            {getPageCount()}
+            Page {getState().pagination.pageIndex + 1} of {getPageCount()}
           </div>
           <div className='ml-auto flex items-center gap-2 lg:ml-0'>
             <Button

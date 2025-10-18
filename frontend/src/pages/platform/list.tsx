@@ -24,25 +24,33 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function PlatformList() {
   const createForm = useModalForm<Platform>({
     refineCoreProps: {
+      resource: "platforms",
       action: "create"
     }
   });
 
   const editForm = useModalForm<Platform>({
     refineCoreProps: {
+      resource: "platforms",
       action: "edit"
     }
   });
 
-  const { mutate: deleteMutate } = useDelete<Platform>();
+  const { mutate: deleteMutate } = useDelete<Platform>({});
 
   const columns: ColumnDef<Platform>[] = [
-    { id: "id", accessorKey: "id", header: "Id" },
-    { id: "name", accessorKey: "name", header: "Name" },
+    { id: "id", accessorKey: "id", header: "Id", size: 400 },
+    {
+      id: "name",
+      accessorKey: "name",
+      header: "Name",
+      size: 300
+    },
     {
       id: "manufacturer",
       accessorKey: "manufacturer",
-      header: "Manufacturer"
+      header: "Manufacturer",
+      size: -1
     },
     {
       id: "actions",
@@ -66,13 +74,30 @@ export function PlatformList() {
             <IconTrash className='text-red-400' />
           </Button>
         </div>
-      )
+      ),
+      size: 100
     }
   ];
 
   const tableProps = useTable({
     columns,
-    refineCoreProps: { pagination: { mode: "server" } }
+    refineCoreProps: {
+      resource: "platforms",
+      pagination: {
+        mode: "server"
+      },
+      sorters: {
+        mode: "off"
+      }
+    },
+    state: {
+      sorting: [
+        {
+          id: "name",
+          desc: false
+        }
+      ]
+    }
   });
 
   return (
@@ -101,7 +126,7 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Platform> }) {
   } = form;
   return (
     <Dialog open={modal.visible} onOpenChange={modal.close}>
-      <DialogContent>
+      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>
             {defaultValues?.id ? "Edit Platform" : "Add Platform"}
