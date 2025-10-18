@@ -9,3 +9,11 @@ spring:
     url: jdbc:postgresql://localhost/postgres
     user: postgres
     password: postgres
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: localhost
+
+springdoc:
+  enable-default-api-docs: false
