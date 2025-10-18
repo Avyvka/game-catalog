@@ -12,6 +12,7 @@ import com.github.avyvka.game.catalog.model.entity.GamePlatformEntity;
 import com.github.avyvka.game.catalog.repository.GameGenreRepository;
 import com.github.avyvka.game.catalog.repository.GamePlatformRepository;
 import com.github.avyvka.game.catalog.repository.GameRepository;
+import com.github.avyvka.game.catalog.service.DeveloperService;
 import com.github.avyvka.game.catalog.service.GameService;
 import com.github.avyvka.game.catalog.service.support.AbstractReactiveCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import java.util.UUID;
 public class DefaultGameService
         extends AbstractReactiveCrudService<GameEntity, GameDto, UUID>
         implements GameService {
+
     private final GameGenreRepository gameGenreRepository;
 
     private final GamePlatformRepository gamePlatformRepository;
@@ -34,6 +36,8 @@ public class DefaultGameService
 
     private final PlatformMapper platformMapper;
 
+    private final DeveloperService developerService;
+
     @Autowired
     protected DefaultGameService(
             GameRepository gameRepository,
@@ -41,13 +45,15 @@ public class DefaultGameService
             GamePlatformRepository gamePlatformRepository,
             GameMapper gameMapper,
             GenreMapper genreMapper,
-            PlatformMapper platformMapper
+            PlatformMapper platformMapper,
+            DeveloperService developerService
     ) {
         super(gameRepository, gameMapper);
         this.gameGenreRepository = gameGenreRepository;
         this.gamePlatformRepository = gamePlatformRepository;
         this.genreMapper = genreMapper;
         this.platformMapper = platformMapper;
+        this.developerService = developerService;
     }
 
     @Override
@@ -71,7 +77,8 @@ public class DefaultGameService
 
     @Override
     public Mono<GameDto> findById(UUID uuid) {
-        var game = super.findById(uuid);
+        var game = super.findById(uuid)
+                .zipWhen((e) -> developerService.findById(e.developer().id()));
 
         var genres = gameGenreRepository.findAllGenreByGameId(uuid)
                 .map(genreMapper::toDto);
@@ -82,9 +89,9 @@ public class DefaultGameService
         return Mono.zip(game, genres.collectList(), platforms.collectList())
                 .map(tuple ->
                         new GameDto(
-                                tuple.getT1().id(),
-                                tuple.getT1().name(),
-                                tuple.getT1().developer(),
+                                tuple.getT1().getT1().id(),
+                                tuple.getT1().getT1().name(),
+                                tuple.getT1().getT2(),
                                 tuple.getT2(),
                                 tuple.getT3()
                         )
