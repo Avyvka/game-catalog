@@ -1,10 +1,11 @@
 import PageContainer from '@/components/layout/page-container';
 import React from 'react';
+import { PlatformList } from "@/pages/platform/list";
 
-export default async function GamePage() {
+export default async function PlatformListPage() {
   return (
     <PageContainer>
-      <div></div>
+      <PlatformList />
     </PageContainer>
   );
 }

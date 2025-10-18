@@ -20,24 +20,28 @@ import {
   SidebarRail
 } from '@/components/ui/sidebar';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
-import { useMediaQuery } from '@/hooks/use-media-query';
 import { useSession } from 'next-auth/react';
 import {
   IconDeviceGamepad2,
   IconDotsVertical,
-  IconLogout,
-  IconPhotoUp} from '@tabler/icons-react';
+  IconLogout
+} from '@tabler/icons-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
-import { NavItem } from '@/types';
+
+interface NavItem {
+  title: string;
+  url: string;
+  icon: keyof typeof Icons;
+}
 
 const navItems: NavItem[] = [
   { title: 'Game', url: '/dashboard/game', icon: 'dice2' },
   { title: 'Developer', url: '/dashboard/developer', icon: 'userCode' },
   { title: 'Genre', url: '/dashboard/genre', icon: 'sphere' },
-  { title: 'Platform', url: '/dashboard/platform', icon: 'steam' },
+  { title: 'Platform', url: '/dashboard/platforms', icon: 'steam' }
 ];
 
 export default function AppSidebar() {
@@ -46,17 +50,17 @@ export default function AppSidebar() {
   const user = session?.user;
 
   return (
-    <Sidebar collapsible="icon" variant="inset">
+    <Sidebar collapsible='icon' variant='inset'>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
+              className='data-[slot=sidebar-menu-button]:!p-1.5'
             >
-              <a href="#">
-                <IconDeviceGamepad2 className="!size-5" />
-                <span className="text-base font-semibold">Game Catalog</span>
+              <a href='#'>
+                <IconDeviceGamepad2 className='!size-5' />
+                <span className='text-base font-semibold'>Game Catalog</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -67,7 +71,7 @@ export default function AppSidebar() {
           <SidebarGroupLabel>Overview</SidebarGroupLabel>
           <SidebarMenu>
             {navItems.map((item) => {
-              const Icon = item.icon ? Icons[item.icon] : undefined;
+              const Icon = Icons[item.icon];
               return (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
@@ -76,7 +80,7 @@ export default function AppSidebar() {
                     isActive={pathname === item.url}
                   >
                     <Link href={item.url}>
-                      {Icon && <Icon />}
+                      <Icon />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>

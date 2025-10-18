@@ -29,4 +29,7 @@ public interface ReactiveCrudController<D, ID> {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     Mono<Void> delete(@PathVariable ID id);
+
+    @GetMapping("/count")
+    Mono<Long> count();
 }

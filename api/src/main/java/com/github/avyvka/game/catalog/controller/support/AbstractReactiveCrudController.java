@@ -71,4 +71,9 @@ public abstract class AbstractReactiveCrudController<D, ID> implements ReactiveC
     public Mono<Void> delete(@PathVariable ID id) {
         return service.delete(id);
     }
+
+    @GetMapping("/count")
+    public Mono<Long> count() {
+        return service.count();
+    }
 }

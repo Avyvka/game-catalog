@@ -61,4 +61,9 @@ public abstract class AbstractReactiveCrudService<E, D, ID> implements ReactiveC
     public Mono<Void> delete(ID id) {
         return repository.deleteById(id);
     }
+
+    @Override
+    public Mono<Long> count() {
+        return repository.count();
+    }
 }

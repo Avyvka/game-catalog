@@ -17,4 +17,6 @@ public interface ReactiveCrudService<D, ID> {
     Mono<D> partialUpdate(ID id, Mono<D> dto);
 
     Mono<Void> delete(ID id);
+
+    Mono<Long> count();
 }
