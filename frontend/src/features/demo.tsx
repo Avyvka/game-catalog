@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   MultiSelect,
@@ -7,13 +7,12 @@ import {
   MultiSelectItem,
   MultiSelectTrigger,
   MultiSelectValue
-} from '@/components/ui/multi-select';
-import { useState } from 'react';
+} from "@/components/ui/multi-select";
 
 const options = [
-  { value: 'react', label: 'React' },
-  { value: 'vue', label: 'Vue.js' },
-  { value: 'angular', label: 'Angular' }
+  { value: "react", label: "React" },
+  { value: "vue", label: "Vue.js" },
+  { value: "angular", label: "Angular" }
 ];
 
 export function DemoMultiSelect() {

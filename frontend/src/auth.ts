@@ -1,19 +1,18 @@
-import NextAuth from 'next-auth';
-import 'next-auth/jwt';
-import { JWT } from '@auth/core/jwt';
-import { NextResponse } from 'next/server';
+import NextAuth from "next-auth";
+import "next-auth/jwt";
+import { JWT } from "@auth/core/jwt";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, auth, signIn } = NextAuth({
   providers: [
     {
-      type: 'oidc',
-      id: 'casdoor',
-      name: 'Casdoor',
+      type: "oidc",
+      id: "casdoor",
+      name: "Casdoor",
       clientId: process.env.CASDOOR_CLIENT_ID!,
       clientSecret: process.env.CASDOOR_CLIENT_SECRET!,
       authorization: {
         url: `${process.env.CASDOOR_BASE_URL}/login/oauth/authorize`,
-        params: { scope: 'profile email openid' }
+        params: { scope: "profile email openid" }
       },
       token: `${process.env.CASDOOR_BASE_URL}/api/login/oauth/access_token`,
       userinfo: `${process.env.CASDOOR_BASE_URL}/api/userinfo`,
@@ -51,19 +50,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
 async function refreshToken(token: JWT): Promise<JWT | null> {
   if (!token.refreshToken) {
-    throw new TypeError('Missing refresh_token');
+    throw new TypeError("Missing refresh_token");
   }
 
   try {
     const response = await fetch(
       `${process.env.CASDOOR_BASE_URL}/api/login/oauth/refresh_token`,
       {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
           client_id: process.env.CASDOOR_CLIENT_ID!,
           client_secret: process.env.CASDOOR_CLIENT_SECRET!,
-          grant_type: 'refresh_token',
+          grant_type: "refresh_token",
           refresh_token: token.refreshToken!
         })
       }
@@ -88,24 +87,24 @@ async function refreshToken(token: JWT): Promise<JWT | null> {
       refreshToken: newTokens.refresh_token || token.refreshToken
     };
   } catch (error) {
-    console.error('Error refreshing access_token', error);
-    token.error = 'RefreshTokenError';
+    console.error("Error refreshing access_token", error);
+    token.error = "RefreshTokenError";
     return token;
   }
 }
 
-declare module 'next-auth' {
+declare module "next-auth" {
   interface Session {
     accessToken: string | undefined;
-    error?: 'RefreshTokenError';
+    error?: "RefreshTokenError";
   }
 }
 
-declare module 'next-auth/jwt' {
+declare module "next-auth/jwt" {
   interface JWT {
     accessToken: string | undefined;
     expiresAt?: number;
     refreshToken?: string;
-    error?: 'RefreshTokenError';
+    error?: "RefreshTokenError";
   }
 }

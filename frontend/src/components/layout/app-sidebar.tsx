@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,7 +6,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -18,18 +18,18 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail
-} from '@/components/ui/sidebar';
-import { UserAvatarProfile } from '@/components/user-avatar-profile';
-import { useSession } from 'next-auth/react';
+} from "@/components/ui/sidebar";
+import { UserAvatarProfile } from "@/components/user-avatar-profile";
+import { useSession } from "next-auth/react";
 import {
   IconDeviceGamepad2,
   IconDotsVertical,
   IconLogout
-} from '@tabler/icons-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import * as React from 'react';
-import { Icons } from '../icons';
+} from "@tabler/icons-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import * as React from "react";
+import { Icons } from "../icons";
 
 interface NavItem {
   title: string;
@@ -38,10 +38,10 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { title: 'Game', url: '/dashboard/games', icon: 'dice2' },
-  { title: 'Developer', url: '/dashboard/developers', icon: 'userCode' },
-  { title: 'Genre', url: '/dashboard/genres', icon: 'sphere' },
-  { title: 'Platform', url: '/dashboard/platforms', icon: 'steam' }
+  { title: "Game", url: "/dashboard/games", icon: "dice2" },
+  { title: "Developer", url: "/dashboard/developers", icon: "userCode" },
+  { title: "Genre", url: "/dashboard/genres", icon: "sphere" },
+  { title: "Platform", url: "/dashboard/platforms", icon: "steam" }
 ];
 
 export default function AppSidebar() {

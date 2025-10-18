@@ -1,6 +1,6 @@
-import { Identifiable } from '@/entities';
+import { Identifiable } from "@/entities";
 
-export interface Platform extends Identifiable{
+export interface Platform extends Identifiable {
   /**
    * @minLength 0
    * @maxLength 32

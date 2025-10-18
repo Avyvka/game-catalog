@@ -156,7 +156,7 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Developer> }) {
                 })}
                 className={cn(
                   errors.name &&
-                  "border-destructive focus-visible:ring-destructive"
+                    "border-destructive focus-visible:ring-destructive"
                 )}
               />
             )}
@@ -175,7 +175,7 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Developer> }) {
                 {...register("description")}
                 className={cn(
                   errors.description &&
-                  "border-destructive focus-visible:ring-destructive"
+                    "border-destructive focus-visible:ring-destructive"
                 )}
               />
             )}

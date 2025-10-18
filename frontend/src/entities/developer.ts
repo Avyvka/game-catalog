@@ -1,4 +1,4 @@
-import { Identifiable } from '@/entities';
+import { Identifiable } from "@/entities";
 
 export interface Developer extends Identifiable {
   /**

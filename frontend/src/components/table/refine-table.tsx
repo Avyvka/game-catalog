@@ -63,9 +63,10 @@ export function RefineTable({
                   <TableHead
                     key={header.id}
                     style={{
-                      width: header.column.columnDef.size !== -1
-                        ? `${header.column.columnDef.size}px`
-                        : "auto"
+                      width:
+                        header.column.columnDef.size !== -1
+                          ? `${header.column.columnDef.size}px`
+                          : "auto"
                     }}
                   >
                     {flexRender(

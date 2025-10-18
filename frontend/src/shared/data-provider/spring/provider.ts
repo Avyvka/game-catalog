@@ -1,12 +1,14 @@
-import { BaseRecord, DataProvider, GetListParams, GetListResponse } from "@refinedev/core";
+import {
+  BaseRecord,
+  DataProvider,
+  GetListParams,
+  GetListResponse
+} from "@refinedev/core";
 import simpleRestDataProvider from "@refinedev/simple-rest";
 
 export const springDataProvider = (
-  apiUrl: string,
-): Omit<
-  Required<DataProvider>,
-  "createMany" | "updateMany" | "deleteMany"
-> => {
+  apiUrl: string
+): Omit<Required<DataProvider>, "createMany" | "updateMany" | "deleteMany"> => {
   const delegate = simpleRestDataProvider(apiUrl);
   return {
     ...delegate,
@@ -24,20 +26,20 @@ export const springDataProvider = (
           headers,
           query: {
             page: currentPage - 1,
-            size: pageSize,
-          },
+            size: pageSize
+          }
         }),
         delegate.custom({
           url: `${url}/count`,
           method,
-          headers,
-        }),
+          headers
+        })
       ]);
 
       return {
         data: result.data as TData[],
-        total: total.data as any as number,
+        total: total.data as any as number
       };
-    },
-  }
+    }
+  };
 };
