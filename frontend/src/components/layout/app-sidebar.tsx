@@ -27,7 +27,7 @@ import {
   IconLogout
 } from '@tabler/icons-react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
 
@@ -38,9 +38,9 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { title: 'Game', url: '/dashboard/game', icon: 'dice2' },
-  { title: 'Developer', url: '/dashboard/developer', icon: 'userCode' },
-  { title: 'Genre', url: '/dashboard/genre', icon: 'sphere' },
+  { title: 'Game', url: '/dashboard/games', icon: 'dice2' },
+  { title: 'Developer', url: '/dashboard/developers', icon: 'userCode' },
+  { title: 'Genre', url: '/dashboard/genres', icon: 'sphere' },
   { title: 'Platform', url: '/dashboard/platforms', icon: 'steam' }
 ];
 

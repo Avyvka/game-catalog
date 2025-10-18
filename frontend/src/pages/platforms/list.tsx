@@ -148,7 +148,11 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Platform> }) {
             ) : (
               <Input
                 type='text'
-                {...register("name", { required: true })}
+                {...register("name", {
+                  required: true,
+                  minLength: 1,
+                  maxLength: 32
+                })}
                 className={cn(
                   errors.name &&
                     "border-destructive focus-visible:ring-destructive"
@@ -167,7 +171,11 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Platform> }) {
             ) : (
               <Input
                 type='text'
-                {...register("manufacturer", { required: true })}
+                {...register("manufacturer", {
+                  required: true,
+                  minLength: 1,
+                  maxLength: 32
+                })}
                 className={cn(
                   errors.manufacturer &&
                     "border-destructive focus-visible:ring-destructive"
