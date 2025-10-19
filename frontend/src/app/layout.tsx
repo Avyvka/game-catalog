@@ -15,8 +15,8 @@ const META_THEME_COLORS = {
 };
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn',
-  description: 'Basic dashboard with Next.js and Shadcn'
+  title: "Game Catalog",
+  description: "Game Catalog"
 };
 
 export const viewport: Viewport = {
@@ -46,6 +46,7 @@ export default async function RootLayout({
             `
         }}
       />
+      <title>{metadata.title as string}</title>
     </head>
     <body
       className={cn(

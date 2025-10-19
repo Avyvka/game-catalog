@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { ActiveThemeProvider } from "../active-theme";
 import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -14,7 +14,7 @@ export default function Providers({
   activeThemeValue: string;
   children: React.ReactNode;
 }) {
-  const [queryClient] = useState(() => new QueryClient());
+  const queryClient = new QueryClient();
   return (
     <>
       <ActiveThemeProvider initialTheme={activeThemeValue}>

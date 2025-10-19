@@ -17,6 +17,9 @@ RUN \
   else echo "Lockfile not found." && exit 1; \
   fi
 
+# 🙈
+RUN find ./node_modules/.pnpm/@refinedev+react-table@* -type f -name "*.mjs" -exec \
+    sed -i 's|lodash/isEqual|lodash/isEqual.js|g' {} +
 
 # Rebuild the source code only when needed
 FROM base AS builder
