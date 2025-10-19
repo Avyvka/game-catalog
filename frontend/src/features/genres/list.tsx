@@ -9,11 +9,12 @@ import { Genre } from '@/entities';
 import { useModalForm } from '@refinedev/react-hook-form';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Form, FormItem, FormLabel } from '@/components/ui/form';
 import { UseModalFormReturnType } from '@refinedev/react-hook-form/';
 import { cn } from '@/lib/utils';
 import { useDelete } from '@refinedev/core';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Field, FieldLabel } from '@/components/ui/field';
+import { Controller } from 'react-hook-form';
 
 export default function GenreList() {
   const createForm = useModalForm<Genre>({
@@ -106,11 +107,11 @@ export default function GenreList() {
 function DialogForm({ form }: { form: UseModalFormReturnType<Genre> }) {
   const {
     modal,
-    register,
+    control,
     handleSubmit,
     refineCore: { onFinish, formLoading },
     saveButtonProps,
-    formState: { defaultValues, errors }
+    formState: { defaultValues }
   } = form;
   return (
     <Dialog open={modal.visible} onOpenChange={modal.close}>
@@ -120,31 +121,31 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Genre> }) {
             {defaultValues?.id ? 'Edit Genre' : 'Add Genre'}
           </DialogTitle>
         </DialogHeader>
-        <Form {...form}>
           <form onSubmit={handleSubmit(onFinish)} className="mt-1 flex flex-col gap-5">
-            <FormItem className="flex flex-col gap-3">
-              {formLoading ? (
-                <Skeleton className="h-2 w-10 rounded-md" />
-              ) : (
-                <FormLabel>Name</FormLabel>
-              )}
-              {formLoading ? (
+            {formLoading ? (
+              <div className="flex flex-col gap-3">
+                <Skeleton className="h-2 w-20 rounded-md" />
                 <Skeleton className="h-9 w-full rounded-md" />
-              ) : (
-                <Input
-                  type="text"
-                  {...register('name', {
-                    required: true,
-                    minLength: 1,
-                    maxLength: 32
-                  })}
-                  className={cn(
-                    errors.name &&
-                    'border-destructive focus-visible:ring-destructive'
-                  )}
-                />
-              )}
-            </FormItem>
+              </div>
+            ) : (
+              <Controller
+                name="name"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Field className="flex flex-col gap-3">
+                    <FieldLabel>Name</FieldLabel>
+                    <Input
+                      {...field}
+                      value={field.value ?? ""}
+                      type="text"
+                      className={cn(
+                        fieldState.invalid && 'border-destructive focus-visible:ring-destructive'
+                      )}
+                    />
+                  </Field>
+                )}
+              />
+            )}
             <DialogFooter>
               {formLoading ? (
                 <Skeleton className="h-9 w-20 rounded-md" />
@@ -153,8 +154,8 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Genre> }) {
                   {defaultValues?.id ? 'Update' : 'Save'}
                 </Button>
               )}
-            </DialogFooter></form>
-        </Form>
+            </DialogFooter>
+          </form>
       </DialogContent>
     </Dialog>
   );

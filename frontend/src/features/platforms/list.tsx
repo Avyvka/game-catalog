@@ -9,11 +9,12 @@ import { Platform } from '@/entities';
 import { useModalForm } from '@refinedev/react-hook-form';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Form, FormItem, FormLabel } from '@/components/ui/form';
 import { UseModalFormReturnType } from '@refinedev/react-hook-form/';
 import { cn } from '@/lib/utils';
 import { useDelete } from '@refinedev/core';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Controller } from 'react-hook-form';
+import { Field, FieldLabel } from '@/components/ui/field';
 
 export default function PlatformList() {
   const createForm = useModalForm<Platform>({
@@ -112,11 +113,11 @@ export default function PlatformList() {
 function DialogForm({ form }: { form: UseModalFormReturnType<Platform> }) {
   const {
     modal,
-    register,
+    control,
     handleSubmit,
     refineCore: { onFinish, formLoading },
     saveButtonProps,
-    formState: { defaultValues, errors }
+    formState: { defaultValues }
   } = form;
   return (
     <Dialog open={modal.visible} onOpenChange={modal.close}>
@@ -126,64 +127,65 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Platform> }) {
             {defaultValues?.id ? 'Edit Platform' : 'Add Platform'}
           </DialogTitle>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={handleSubmit(onFinish)} className="mt-1 flex flex-col gap-5">
-            <FormItem className="flex flex-col gap-3">
-              {formLoading ? (
-                <Skeleton className="h-2 w-10 rounded-md" />
-              ) : (
-                <FormLabel>Name</FormLabel>
+        <form onSubmit={handleSubmit(onFinish)} className="mt-1 flex flex-col gap-5">
+          {formLoading ? (
+            <div className="flex flex-col gap-3">
+              <Skeleton className="h-2 w-20 rounded-md" />
+              <Skeleton className="h-9 w-full rounded-md" />
+            </div>
+          ) : (
+            <Controller
+              name="name"
+              control={control}
+              render={({ field, fieldState }) => (
+                <Field className="flex flex-col gap-3">
+                  <FieldLabel>Name</FieldLabel>
+                  <Input
+                    {...field}
+                    value={field.value ?? ""}
+                    type="text"
+                    className={cn(
+                      fieldState.invalid && 'border-destructive focus-visible:ring-destructive'
+                    )}
+                  />
+                </Field>
               )}
-              {formLoading ? (
-                <Skeleton className="h-9 w-full rounded-md" />
-              ) : (
-                <Input
-                  type="text"
-                  {...register('name', {
-                    required: true,
-                    minLength: 1,
-                    maxLength: 32
-                  })}
-                  className={cn(
-                    errors.name &&
-                    'border-destructive focus-visible:ring-destructive'
-                  )}
-                />
+            />
+          )}
+          {formLoading ? (
+            <div className="flex flex-col gap-3">
+              <Skeleton className="h-2 w-50 rounded-md" />
+              <Skeleton className="h-9 w-full rounded-md" />
+            </div>
+          ) : (
+            <Controller
+              name="manufacturer"
+              control={control}
+              render={({ field, fieldState }) => (
+                <Field className="flex flex-col gap-3">
+                  <FieldLabel>Manufacturer</FieldLabel>
+                  <Input
+                    {...field}
+                    value={field.value ?? ""}
+                    type="text"
+                    className={cn(
+                      fieldState.invalid && 'border-destructive focus-visible:ring-destructive'
+                    )}
+                  />
+                </Field>
               )}
-            </FormItem>
-            <FormItem className="flex flex-col gap-3">
-              {formLoading ? (
-                <Skeleton className="h-2 w-20 rounded-md" />
-              ) : (
-                <FormLabel>Manufacturer</FormLabel>
-              )}
-              {formLoading ? (
-                <Skeleton className="h-9 w-full rounded-md" />
-              ) : (
-                <Input
-                  type="text"
-                  {...register('manufacturer', {
-                    required: true,
-                    minLength: 1,
-                    maxLength: 32
-                  })}
-                  className={cn(
-                    errors.manufacturer &&
-                    'border-destructive focus-visible:ring-destructive'
-                  )}
-                />
-              )}
-            </FormItem>
-            <DialogFooter>
-              {formLoading ? (
-                <Skeleton className="h-9 w-20 rounded-md" />
-              ) : (
-                <Button type="submit" {...saveButtonProps}>
-                  {defaultValues?.id ? 'Update' : 'Save'}
-                </Button>
-              )}
-            </DialogFooter></form>
-        </Form>
+            />
+          )}
+          <DialogFooter>
+            {formLoading ? (
+              <Skeleton className="h-9 w-20 rounded-md" />
+            ) : (
+              <Button type="submit" {...saveButtonProps}>
+                {defaultValues?.id ? 'Update' : 'Save'}
+              </Button>
+            )}
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

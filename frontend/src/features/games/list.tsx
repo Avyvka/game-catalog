@@ -9,7 +9,6 @@ import { Developer, Game, Genre, Platform } from '@/entities';
 import { useModalForm } from '@refinedev/react-hook-form';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Form, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { UseModalFormReturnType } from '@refinedev/react-hook-form/';
 import { cn } from '@/lib/utils';
 import { useDelete, useSelect } from '@refinedev/core';
@@ -27,6 +26,8 @@ import {
   MultiSelectTrigger,
   MultiSelectValue
 } from '@/components/ui/multi-select';
+import { Controller } from 'react-hook-form';
+import { Field, FieldLabel } from '@/components/ui/field';
 
 export default function GameList() {
   const viewForm = useModalForm<Game>({
@@ -135,30 +136,29 @@ export default function GameList() {
 function DialogForm({ form }: { form: UseModalFormReturnType<Game> }) {
   const {
     modal,
-    register,
+    control,
     handleSubmit,
     refineCore: { onFinish, formLoading },
     saveButtonProps,
-    formState: { defaultValues, errors },
-    control,
+    formState: { defaultValues },
     setValue
   } = form;
 
-  const { options: developerOptions } = useSelect<Developer>({
+  const { options: developerOptions, query: developerQuery } = useSelect<Developer>({
     resource: 'developers',
     optionValue: 'id',
     optionLabel: 'name',
     defaultValue: defaultValues?.developer?.id
   });
 
-  const { options: genreOptions } = useSelect<Genre>({
+  const { options: genreOptions, query: genreQuery } = useSelect<Genre>({
     resource: 'genres',
     optionValue: 'id',
     optionLabel: 'name',
     defaultValue: defaultValues?.genres?.map((e: Genre) => e.id)
   });
 
-  const { options: platformOptions } = useSelect<Platform>({
+  const { options: platformOptions, query: platformQuery } = useSelect<Platform>({
     resource: 'platforms',
     optionValue: 'id',
     optionLabel: 'name',
@@ -171,6 +171,12 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Game> }) {
     }
   }, [defaultValues, setValue]);
 
+  const isLoading =
+    formLoading
+    || developerQuery.isLoading
+    || genreQuery.isLoading
+    || platformQuery.isLoading;
+
   return (
     <Dialog open={modal.visible} onOpenChange={modal.close}>
       <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -179,164 +185,156 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Game> }) {
             {defaultValues?.id ? 'Edit Game' : 'Add Game'}
           </DialogTitle>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={handleSubmit(onFinish)} className="mt-1 flex flex-col gap-5">
-            <FormItem className="flex flex-col gap-3">
-              {formLoading ? (
-                <Skeleton className="h-2 w-10 rounded-md" />
-              ) : (
-                <FormLabel>Name</FormLabel>
+        <form onSubmit={handleSubmit(onFinish)} className="mt-1 flex flex-col gap-5">
+          {isLoading ? (
+            <div className="flex flex-col gap-3">
+              <Skeleton className="h-2 w-20 rounded-md" />
+              <Skeleton className="h-9 w-full rounded-md" />
+            </div>
+          ) : (
+            <Controller
+              name="name"
+              control={control}
+              render={({ field, fieldState }) => (
+                <Field className="flex flex-col gap-3">
+                  <FieldLabel>Name</FieldLabel>
+                  <Input
+                    {...field}
+                    value={field.value ?? ''}
+                    type="text"
+                    className={cn(
+                      fieldState.invalid && 'border-destructive focus-visible:ring-destructive'
+                    )}
+                  />
+                </Field>
               )}
-              {formLoading ? (
-                <Skeleton className="h-9 w-full rounded-md" />
-              ) : (
-                <Input
-                  type="text"
-                  {...register('name', {
-                    required: true,
-                    minLength: 1,
-                    maxLength: 32
-                  })}
-                  className={cn(
-                    errors.name &&
-                    'border-destructive focus-visible:ring-destructive'
-                  )}
-                />
-              )}
-            </FormItem>
-
-            <FormField
+            />
+          )}
+          {isLoading ? (
+            <div className="flex flex-col gap-3">
+              <Skeleton className="h-2 w-32 rounded-md" />
+              <Skeleton className="h-9 w-full rounded-md" />
+            </div>
+          ) : (
+            <Controller
               name="developer"
               control={control}
               render={({ field }) => (
-                <FormItem className="flex flex-col gap-3">
-                  {formLoading ? (
-                    <Skeleton className="h-2 w-10 rounded-md" />
-                  ) : (
-                    <FormLabel>Developer</FormLabel>
-                  )}
-                  {formLoading ? (
-                    <Skeleton className="h-9 w-full rounded-md" />
-                  ) : (
-                    <Select
-                      value={field.value?.id}
-                      onValueChange={(value) => field.onChange({ id: value })}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {developerOptions?.map((option) => (
-                          <SelectItem
-                            value={`${option.value}`}
-                            key={option.value}
-                          >
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                </FormItem>
+                <Field className="flex flex-col gap-3">
+                  <FieldLabel>Developer</FieldLabel>
+                  <Select
+                    value={field.value?.id}
+                    onValueChange={(value) => field.onChange({ id: value })}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {developerOptions?.map((option) => (
+                        <SelectItem
+                          value={`${option.value}`}
+                          key={option.value}
+                        >
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
               )}
             />
-
-            <FormField
+          )}
+          {isLoading ? (
+            <div className="flex flex-col gap-3">
+              <Skeleton className="h-2 w-16 rounded-md" />
+              <Skeleton className="h-9 w-full rounded-md" />
+            </div>
+          ) : (
+            <Controller
               name="genres"
               control={control}
               render={({ field }) => (
-                <FormItem className="flex flex-col gap-3">
-                  {formLoading ? (
-                    <Skeleton className="h-2 w-10 rounded-md" />
-                  ) : (
-                    <FormLabel>Genres</FormLabel>
-                  )}
-                  {formLoading ? (
-                    <Skeleton className="h-9 w-full rounded-md" />
-                  ) : (
-                    <MultiSelect
-                      values={field.value?.map((e: Platform) => e.id) ?? []}
-                      onValuesChange={(values) => {
-                        const selected = genreOptions
-                          .filter((opt) => values.includes(opt.value))
-                          .map((opt) => ({ id: opt.value }));
-                        field.onChange(selected);
-                      }}
-                    >
-                      <MultiSelectTrigger className="w-full">
-                        <MultiSelectValue />
-                      </MultiSelectTrigger>
-                      <MultiSelectContent>
-                        <MultiSelectGroup>
-                          {genreOptions?.map((option) => (
-                            <MultiSelectItem
-                              key={option.value}
-                              value={`${option.value}`}
-                            >
-                              {option.label}
-                            </MultiSelectItem>
-                          ))}
-                        </MultiSelectGroup>
-                      </MultiSelectContent>
-                    </MultiSelect>
-                  )}
-                </FormItem>
+                <Field className="flex flex-col gap-3">
+                  <FieldLabel>Genres</FieldLabel>
+                  <MultiSelect
+                    values={field.value?.map((e: Platform) => e.id) ?? []}
+                    onValuesChange={(values) => {
+                      const selected = genreOptions
+                        .filter((opt) => values.includes(opt.value))
+                        .map((opt) => ({ id: opt.value }));
+                      field.onChange(selected);
+                    }}
+                  >
+                    <MultiSelectTrigger className="w-full">
+                      <MultiSelectValue />
+                    </MultiSelectTrigger>
+                    <MultiSelectContent>
+                      <MultiSelectGroup>
+                        {genreOptions?.map((option) => (
+                          <MultiSelectItem
+                            key={option.value}
+                            value={`${option.value}`}
+                          >
+                            {option.label}
+                          </MultiSelectItem>
+                        ))}
+                      </MultiSelectGroup>
+                    </MultiSelectContent>
+                  </MultiSelect>
+                </Field>
               )}
             />
-
-            <FormField
+          )}
+          {isLoading ? (
+            <div className="flex flex-col gap-3">
+              <Skeleton className="h-2 w-24 rounded-md" />
+              <Skeleton className="h-9 w-full rounded-md" />
+            </div>
+          ) : (
+            <Controller
               name="platforms"
               control={control}
               render={({ field }) => (
-                <FormItem className="flex flex-col gap-3">
-                  {formLoading ? (
-                    <Skeleton className="h-2 w-10 rounded-md" />
-                  ) : (
-                    <FormLabel>Platforms</FormLabel>
-                  )}
-                  {formLoading ? (
-                    <Skeleton className="h-9 w-full rounded-md" />
-                  ) : (
-                    <MultiSelect
-                      values={field.value?.map((e: Platform) => e.id) ?? []}
-                      onValuesChange={(values) => {
-                        const selected = platformOptions
-                          .filter((opt) => values.includes(opt.value))
-                          .map((opt) => ({ id: opt.value }));
-                        field.onChange(selected);
-                      }}
-                    >
-                      <MultiSelectTrigger className="w-full">
-                        <MultiSelectValue />
-                      </MultiSelectTrigger>
-                      <MultiSelectContent>
-                        <MultiSelectGroup>
-                          {platformOptions?.map((option) => (
-                            <MultiSelectItem
-                              key={option.value}
-                              value={`${option.value}`}
-                            >
-                              {option.label}
-                            </MultiSelectItem>
-                          ))}
-                        </MultiSelectGroup>
-                      </MultiSelectContent>
-                    </MultiSelect>
-                  )}
-                </FormItem>
+                <Field className="flex flex-col gap-3">
+                  <FieldLabel>Platforms</FieldLabel>
+                  <MultiSelect
+                    values={field.value?.map((e: Platform) => e.id) ?? []}
+                    onValuesChange={(values) => {
+                      const selected = platformOptions
+                        .filter((opt) => values.includes(opt.value))
+                        .map((opt) => ({ id: opt.value }));
+                      field.onChange(selected);
+                    }}
+                  >
+                    <MultiSelectTrigger className="w-full">
+                      <MultiSelectValue />
+                    </MultiSelectTrigger>
+                    <MultiSelectContent>
+                      <MultiSelectGroup>
+                        {platformOptions?.map((option) => (
+                          <MultiSelectItem
+                            key={option.value}
+                            value={`${option.value}`}
+                          >
+                            {option.label}
+                          </MultiSelectItem>
+                        ))}
+                      </MultiSelectGroup>
+                    </MultiSelectContent>
+                  </MultiSelect>
+                </Field>
               )}
             />
-
-            <DialogFooter>
-              {formLoading ? (
-                <Skeleton className="h-9 w-20 rounded-md" />
-              ) : (
-                <Button type="submit" {...saveButtonProps}>
-                  {defaultValues?.id ? 'Update' : 'Save'}
-                </Button>
-              )}
-            </DialogFooter></form>
-        </Form>
+          )}
+          <DialogFooter>
+            {isLoading ? (
+              <Skeleton className="h-9 w-20 rounded-md" />
+            ) : (
+              <Button type="submit" {...saveButtonProps}>
+                {defaultValues?.id ? 'Update' : 'Save'}
+              </Button>
+            )}
+          </DialogFooter></form>
       </DialogContent>
     </Dialog>
   );
@@ -349,7 +347,6 @@ function DrawerForm({ form }: { form: UseModalFormReturnType<Game> }) {
     formState: { defaultValues }
   } = form;
   const game = defaultValues as Game | null;
-
   return (
     <Drawer
       open={modal.visible}
@@ -382,7 +379,7 @@ function DrawerForm({ form }: { form: UseModalFormReturnType<Game> }) {
         <Item>
           <ItemContent>
             <ItemTitle>Genres</ItemTitle>
-            <div>
+            <div className={'flex flex-wrap gap-1'}>
               {game?.genres &&
                 game?.genres.map((genre) => (
                   <Badge
@@ -398,7 +395,7 @@ function DrawerForm({ form }: { form: UseModalFormReturnType<Game> }) {
         <Item>
           <ItemContent>
             <ItemTitle>Platforms</ItemTitle>
-            <div>
+            <div className={'flex flex-wrap gap-1'}>
               {game?.platforms &&
                 game?.platforms.map((platform) => (
                   <Badge
