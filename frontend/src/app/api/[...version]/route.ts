@@ -30,14 +30,14 @@ async function handler(request: NextRequest) {
 
   const url = `${process.env.API_BASE_URL}${request.nextUrl.pathname}${request.nextUrl.search}`;
 
-  const options: RequestInit = {
+  const options: RequestInit & { duplex?: 'half' } = {
     method: request.method,
     headers
   };
 
   if (request.method !== "GET" && request.method !== "HEAD") {
     options.body = request.body;
-    (options as any).duplex = "half";
+    options.duplex = "half";
   }
 
   const result = await fetch(url, options);

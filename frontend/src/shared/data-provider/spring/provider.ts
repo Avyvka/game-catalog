@@ -38,7 +38,7 @@ export const springDataProvider = (
 
       return {
         data: result.data as TData[],
-        total: total.data as any as number
+        total: total.data as never as number
       };
     }
   };

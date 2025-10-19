@@ -30,7 +30,7 @@ import {
 export function RefineTable({
   tableProps
 }: {
-  tableProps: UseTableReturnType<any, any>;
+  tableProps: UseTableReturnType<never, never>;
 }) {
   const {
     reactTable: {
@@ -121,7 +121,7 @@ export function RefineTable({
               }}
               disabled={isLoading}
             >
-              <SelectTrigger size='sm' className='w-20' id='rows-per-page'>
+              <SelectTrigger className='w-20' id='rows-per-page'>
                 <SelectValue placeholder={getState().pagination.pageSize} />
               </SelectTrigger>
               <SelectContent side='top'>
