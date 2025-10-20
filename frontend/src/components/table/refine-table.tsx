@@ -58,13 +58,9 @@ export function RefineTable({
       setPageIndex,
     },
     refineCore: {
-      tableQuery: { isLoading, error, refetch },
+      tableQuery: { isLoading },
     },
   } = tableProps
-
-  if (error) {
-    return <Error message={error["message"]} onRetry={refetch} />
-  }
 
   return (
     <div className="flex w-full flex-col gap-6">
@@ -209,7 +205,7 @@ function SkeletonRows({ rows, columns }: { rows: number; columns: number }) {
   ))
 }
 
-function Error({
+export function Error({
   message,
   onRetry,
 }: {

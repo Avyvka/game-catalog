@@ -22,7 +22,7 @@ import {
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
-import { RefineTable } from "@/components/table/refine-table"
+import { Error, RefineTable } from "@/components/table/refine-table"
 
 export default function GenreList() {
   const createForm = useModalForm<Genre>({
@@ -96,6 +96,16 @@ export default function GenreList() {
       ],
     },
   })
+
+  const {
+    refineCore: {
+      tableQuery: { error, refetch },
+    },
+  } = tableProps
+
+  if (error) {
+    return <Error message={error.message} onRetry={refetch} />
+  }
 
   return (
     <div className="flex w-full flex-col gap-6">

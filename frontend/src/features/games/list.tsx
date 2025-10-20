@@ -52,7 +52,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
-import { RefineTable } from "@/components/table/refine-table"
+import { Error, RefineTable } from "@/components/table/refine-table"
 
 export default function GameList() {
   const viewForm = useModalForm<Game>({
@@ -141,6 +141,16 @@ export default function GameList() {
       ],
     },
   })
+
+  const {
+    refineCore: {
+      tableQuery: { error, refetch },
+    },
+  } = tableProps
+
+  if (error) {
+    return <Error message={error.message} onRetry={refetch} />
+  }
 
   return (
     <div className="flex w-full flex-col gap-6">

@@ -1,28 +1,28 @@
-"use client"
+"use client";
 
-import React from "react"
-import { Platform } from "@/entities"
-import { useDelete } from "@refinedev/core"
-import { useModalForm } from "@refinedev/react-hook-form"
-import { UseModalFormReturnType } from "@refinedev/react-hook-form/"
-import { useTable } from "@refinedev/react-table"
-import { IconPencil, IconPlus, IconTrash } from "@tabler/icons-react"
-import { ColumnDef } from "@tanstack/react-table"
-import { Controller } from "react-hook-form"
+import React from "react";
+import { Platform } from "@/entities";
+import { useDelete } from "@refinedev/core";
+import { useModalForm } from "@refinedev/react-hook-form";
+import { UseModalFormReturnType } from "@refinedev/react-hook-form/";
+import { useTable } from "@refinedev/react-table";
+import { IconPencil, IconPlus, IconTrash } from "@tabler/icons-react";
+import { ColumnDef } from "@tanstack/react-table";
+import { Controller } from "react-hook-form";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Field, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+
+
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton"
-import { RefineTable } from "@/components/table/refine-table"
+import { Error, RefineTable } from "@/components/table/refine-table"
+
+
+
+
 
 export default function PlatformList() {
   const createForm = useModalForm<Platform>({
@@ -102,6 +102,16 @@ export default function PlatformList() {
       ],
     },
   })
+
+  const {
+    refineCore: {
+      tableQuery: { error, refetch },
+    },
+  } = tableProps
+
+  if (error) {
+    return <Error message={error.message} onRetry={refetch} />
+  }
 
   return (
     <div className="flex w-full flex-col gap-6">
