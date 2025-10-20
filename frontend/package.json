@@ -13,6 +13,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "@hookform/resolvers": "^5.2.2",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -36,9 +37,6 @@
     "eslint": "^9.38.0",
     "eslint-config-next": "^15.5.6",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-config-turbo": "^2.5.8",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-tailwindcss": "^3.18.2",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.546.0",
