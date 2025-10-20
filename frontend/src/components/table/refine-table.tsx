@@ -1,36 +1,46 @@
-import React from "react";
-import { flexRender } from "@tanstack/react-table";
+import React from "react"
+import { UseTableReturnType } from "@refinedev/react-table"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from "../ui/table";
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronsLeft,
+  IconChevronsRight,
+} from "@tabler/icons-react"
+import { flexRender } from "@tanstack/react-table"
+import { AlertCircle } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty"
+import { Label } from "@/components/ui/label"
+import { Skeleton } from "@/components/ui/skeleton"
 
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from "../ui/select";
-import { UseTableReturnType } from "@refinedev/react-table";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+  SelectValue,
+} from "../ui/select"
 import {
-  IconChevronLeft,
-  IconChevronRight,
-  IconChevronsLeft,
-  IconChevronsRight
-} from "@tabler/icons-react";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table"
 
 export function RefineTable({
-  tableProps
+  tableProps,
 }: {
-  tableProps: UseTableReturnType<never, never>;
+  tableProps: UseTableReturnType<never, never>
 }) {
   const {
     reactTable: {
@@ -45,18 +55,22 @@ export function RefineTable({
       getCanPreviousPage,
       previousPage,
       nextPage,
-      setPageIndex
+      setPageIndex,
     },
     refineCore: {
-      tableQuery: { isLoading }
-    }
-  } = tableProps;
+      tableQuery: { isLoading, error, refetch },
+    },
+  } = tableProps
+
+  if (error) {
+    return <Error message={error["message"]} onRetry={refetch} />
+  }
 
   return (
-    <div className='flex w-full flex-col gap-6'>
-      <div className='overflow-hidden rounded-lg border'>
+    <div className="flex w-full flex-col gap-6">
+      <div className="overflow-hidden rounded-lg border">
         <Table>
-          <TableHeader className='bg-muted sticky top-0 z-10'>
+          <TableHeader className="bg-muted sticky top-0 z-10">
             {getHeaderGroups().map((hg) => (
               <TableRow key={hg.id}>
                 {hg.headers.map((header) => (
@@ -66,7 +80,7 @@ export function RefineTable({
                       width:
                         header.column.columnDef.size !== -1
                           ? `${header.column.columnDef.size}px`
-                          : "auto"
+                          : "auto",
                     }}
                   >
                     {flexRender(
@@ -98,7 +112,7 @@ export function RefineTable({
               <TableRow>
                 <TableCell
                   colSpan={getAllColumns().length}
-                  className='h-24 text-center'
+                  className="h-24 text-center"
                 >
                   No results.
                 </TableCell>
@@ -107,24 +121,24 @@ export function RefineTable({
           </TableBody>
         </Table>
       </div>
-      <div className='flex items-center justify-between px-4'>
+      <div className="flex items-center justify-between px-4">
         <div></div>
-        <div className='flex w-full items-center gap-8 lg:w-fit'>
-          <div className='hidden items-center gap-2 lg:flex'>
-            <Label htmlFor='rows-per-page' className='text-sm font-medium'>
+        <div className="flex w-full items-center gap-8 lg:w-fit">
+          <div className="hidden items-center gap-2 lg:flex">
+            <Label htmlFor="rows-per-page" className="text-sm font-medium">
               Rows per page
             </Label>
             <Select
               value={`${getState().pagination.pageSize}`}
               onValueChange={(value) => {
-                setPageSize(Number(value));
+                setPageSize(Number(value))
               }}
               disabled={isLoading}
             >
-              <SelectTrigger className='w-20' id='rows-per-page'>
+              <SelectTrigger className="w-20" id="rows-per-page">
                 <SelectValue placeholder={getState().pagination.pageSize} />
               </SelectTrigger>
-              <SelectContent side='top'>
+              <SelectContent side="top">
                 {[10, 20, 30, 40, 50].map((pageSize) => (
                   <SelectItem key={pageSize} value={`${pageSize}`}>
                     {pageSize}
@@ -133,64 +147,91 @@ export function RefineTable({
               </SelectContent>
             </Select>
           </div>
-          <div className='flex w-fit items-center justify-center text-sm font-medium'>
+          <div className="flex w-fit items-center justify-center text-sm font-medium">
             Page {getState().pagination.pageIndex + 1} of {getPageCount()}
           </div>
-          <div className='ml-auto flex items-center gap-2 lg:ml-0'>
+          <div className="ml-auto flex items-center gap-2 lg:ml-0">
             <Button
-              variant='outline'
-              className='hidden h-8 w-8 p-0 lg:flex'
+              variant="outline"
+              className="hidden h-8 w-8 p-0 lg:flex"
               onClick={() => setPageIndex(0)}
               disabled={isLoading || !getCanPreviousPage()}
             >
-              <span className='sr-only'>Go to first page</span>
+              <span className="sr-only">Go to first page</span>
               <IconChevronsLeft />
             </Button>
             <Button
-              variant='outline'
-              className='size-8'
-              size='icon'
+              variant="outline"
+              className="size-8"
+              size="icon"
               onClick={() => previousPage()}
               disabled={isLoading || !getCanPreviousPage()}
             >
-              <span className='sr-only'>Go to previous page</span>
+              <span className="sr-only">Go to previous page</span>
               <IconChevronLeft />
             </Button>
             <Button
-              variant='outline'
-              className='size-8'
-              size='icon'
+              variant="outline"
+              className="size-8"
+              size="icon"
               onClick={() => nextPage()}
               disabled={isLoading || !getCanNextPage()}
             >
-              <span className='sr-only'>Go to next page</span>
+              <span className="sr-only">Go to next page</span>
               <IconChevronRight />
             </Button>
             <Button
-              variant='outline'
-              className='hidden size-8 lg:flex'
-              size='icon'
+              variant="outline"
+              className="hidden size-8 lg:flex"
+              size="icon"
               onClick={() => setPageIndex(getPageCount() - 1)}
               disabled={isLoading || !getCanNextPage()}
             >
-              <span className='sr-only'>Go to last page</span>
+              <span className="sr-only">Go to last page</span>
               <IconChevronsRight />
             </Button>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function SkeletonRows({ rows, columns }: { rows: number; columns: number }) {
   return Array.from({ length: rows }).map((_, i) => (
     <TableRow key={i}>
       {Array.from({ length: columns }).map((_, j) => (
-        <TableCell key={j} className='py-4'>
-          <Skeleton className='h-3 w-full' />
+        <TableCell key={j} className="py-4">
+          <Skeleton className="h-3 w-full" />
         </TableCell>
       ))}
     </TableRow>
-  ));
+  ))
+}
+
+function Error({
+  message,
+  onRetry,
+}: {
+  message?: string
+  onRetry?: () => void
+}) {
+  return (
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <AlertCircle className="text-red-400" />
+        </EmptyMedia>
+        <EmptyTitle>An error occurred</EmptyTitle>
+        <EmptyDescription>{message || "Failed to load data"}</EmptyDescription>
+      </EmptyHeader>
+      {onRetry && (
+        <EmptyContent>
+          <Button variant="destructive" onClick={onRetry}>
+            Try again
+          </Button>
+        </EmptyContent>
+      )}
+    </Empty>
+  )
 }
