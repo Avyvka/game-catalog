@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next"
+import type { Metadata } from "next"
 import NextTopLoader from "nextjs-toploader"
 
 import { fontVariables } from "@/lib/font"

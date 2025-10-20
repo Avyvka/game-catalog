@@ -148,21 +148,30 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Game> }) {
     resource: 'developers',
     optionValue: 'id',
     optionLabel: 'name',
-    defaultValue: defaultValues?.developer?.id
+    defaultValue: defaultValues?.developer?.id,
+    queryOptions: {
+      enabled: modal.visible
+    }
   });
 
   const { options: genreOptions, query: genreQuery } = useSelect<Genre>({
     resource: 'genres',
     optionValue: 'id',
     optionLabel: 'name',
-    defaultValue: defaultValues?.genres?.map((e: Genre) => e.id)
+    defaultValue: defaultValues?.genres?.map((e: Genre) => e.id),
+    queryOptions: {
+      enabled: modal.visible
+    }
   });
 
   const { options: platformOptions, query: platformQuery } = useSelect<Platform>({
     resource: 'platforms',
     optionValue: 'id',
     optionLabel: 'name',
-    defaultValue: defaultValues?.platforms?.map((e: Platform) => e.id)
+    defaultValue: defaultValues?.platforms?.map((e: Platform) => e.id),
+    queryOptions: {
+      enabled: modal.visible
+    }
   });
 
   React.useEffect(() => {

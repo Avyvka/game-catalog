@@ -9,7 +9,24 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <>
       <SessionProvider>
-        <Refine dataProvider={springDataProvider("/api/v1")}>{children}</Refine>
+        <Refine
+          dataProvider={springDataProvider("/api/v1")}
+          options={{
+            reactQuery: {
+              clientConfig: {
+                defaultOptions: {
+                  queries: {
+                    staleTime: 60_000,
+                    refetchOnWindowFocus: false,
+                    refetchOnReconnect: false,
+                  },
+                },
+              },
+            },
+          }}
+        >
+          {children}
+        </Refine>
       </SessionProvider>
     </>
   )
