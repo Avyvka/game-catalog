@@ -48,6 +48,7 @@ async function handler(request: NextRequest) {
 function stripContentEncoding(result: Response) {
   const responseHeaders = new Headers(result.headers);
   responseHeaders.delete("content-encoding");
+  responseHeaders.delete("content-length");
   return new Response(result.body, {
     status: result.status,
     statusText: result.statusText,
