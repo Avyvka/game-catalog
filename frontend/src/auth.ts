@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import "next-auth/jwt";
 import { JWT } from "@auth/core/jwt";
 
-export const { handlers, auth, signIn } = NextAuth({
+export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     {
       type: "oidc",
