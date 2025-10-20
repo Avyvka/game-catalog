@@ -1,31 +1,16 @@
-"use client";
+"use client"
 
-import React from "react";
-import { ActiveThemeProvider } from "../active-theme";
-import { SessionProvider } from "next-auth/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Refine } from "@refinedev/core";
-import { springDataProvider } from "@/shared/data-provider";
+import React from "react"
+import { springDataProvider } from "@/shared/data-provider"
+import { Refine } from "@refinedev/core"
+import { SessionProvider } from "next-auth/react"
 
-export default function Providers({
-  activeThemeValue,
-  children
-}: {
-  activeThemeValue: string;
-  children: React.ReactNode;
-}) {
-  const queryClient = new QueryClient();
+export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <ActiveThemeProvider initialTheme={activeThemeValue}>
-        <SessionProvider>
-          <QueryClientProvider client={queryClient}>
-            <Refine dataProvider={springDataProvider("/api/v1")}>
-              {children}
-            </Refine>
-          </QueryClientProvider>
-        </SessionProvider>
-      </ActiveThemeProvider>
+      <SessionProvider>
+        <Refine dataProvider={springDataProvider("/api/v1")}>{children}</Refine>
+      </SessionProvider>
     </>
-  );
+  )
 }

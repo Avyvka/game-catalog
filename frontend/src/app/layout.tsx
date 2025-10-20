@@ -1,75 +1,70 @@
-import Providers from '@/components/layout/providers';
-import { Toaster } from '@/components/ui/sonner';
-import { fontVariables } from '@/lib/font';
-import ThemeProvider from '@/components/layout/ThemeToggle/theme-provider';
-import { cn } from '@/lib/utils';
-import type { Metadata, Viewport } from 'next';
-import { cookies } from 'next/headers';
-import NextTopLoader from 'nextjs-toploader';
-import './globals.css';
-import './theme.css';
+import type { Metadata, Viewport } from "next"
+import NextTopLoader from "nextjs-toploader"
+
+import { fontVariables } from "@/lib/font"
+import { cn } from "@/lib/utils"
+import { Toaster } from "@/components/ui/sonner"
+import Providers from "@/components/layout/providers"
+
+import "./globals.css"
+import "./theme.css"
+
+import { ReactNode } from "react"
+
+import { ActiveThemeProvider } from "@/components/active-theme"
+import { ThemeProvider } from "@/components/theme-provider"
 
 const META_THEME_COLORS = {
-  light: '#ffffff',
-  dark: '#09090b'
-};
+  light: "#ffffff",
+  dark: "#09090b",
+}
 
 export const metadata: Metadata = {
   title: "Game Catalog",
-  description: "Game Catalog"
-};
+  description: "Game Catalog",
+}
 
-export const viewport: Viewport = {
-  themeColor: META_THEME_COLORS.light
-};
-
-export default async function RootLayout({
-  children
-}: {
-  children: React.ReactNode;
-}) {
-  const cookieStore = await cookies();
-  const activeThemeValue = cookieStore.get('active_theme')?.value;
-  const isScaled = activeThemeValue?.endsWith('-scaled');
-
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: ReactNode
+}>) {
   return (
     <html lang="en" suppressHydrationWarning>
-    <head>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
               try {
                 if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                   document.querySelector('meta[name="theme-color"]').setAttribute('content', '${META_THEME_COLORS.dark}')
                 }
+                if (localStorage.layout) {
+                  document.documentElement.classList.add('layout-' + localStorage.layout)
+                }
               } catch (_) {}
-            `
-        }}
-      />
-      <title>{metadata.title as string}</title>
-    </head>
-    <body
-      className={cn(
-        'bg-background overflow-hidden overscroll-none font-sans antialiased',
-        activeThemeValue ? `theme-${activeThemeValue}` : '',
-        isScaled ? 'theme-scaled' : '',
-        fontVariables
-      )}
-    >
-    <NextTopLoader color="var(--primary)" showSpinner={false} />
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-      enableColorScheme
-    >
-      <Providers activeThemeValue={activeThemeValue as string}>
-        <Toaster />
-        {children}
-      </Providers>
-    </ThemeProvider>
-    </body>
+            `,
+          }}
+        />
+        <meta name="theme-color" content={META_THEME_COLORS.light} />
+        <title></title>
+      </head>
+      <body
+        className={cn(
+          "text-foreground group/body theme-blue overscroll-none font-sans antialiased [--footer-height:calc(var(--spacing)*14)] [--header-height:calc(var(--spacing)*14)] xl:[--footer-height:calc(var(--spacing)*24)]",
+          fontVariables
+        )}
+      >
+        <NextTopLoader color="var(--primary)" showSpinner={false} />
+        <ThemeProvider>
+          <ActiveThemeProvider initialTheme="blue">
+            <Providers>
+              <Toaster position="top-center" />
+              {children}
+            </Providers>
+          </ActiveThemeProvider>
+        </ThemeProvider>
+      </body>
     </html>
-  );
+  )
 }

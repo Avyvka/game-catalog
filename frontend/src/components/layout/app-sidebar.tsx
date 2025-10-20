@@ -1,12 +1,28 @@
-"use client";
+"use client"
+
+import * as React from "react"
+import { ReactElement } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import {
+  IconDeviceGamepad2,
+  IconDice2,
+  IconDotsVertical,
+  IconLogout,
+  IconSphere,
+  IconSteam,
+  IconUserCode,
+} from "@tabler/icons-react"
+import { signOut, useSession } from "next-auth/react"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Sidebar,
   SidebarContent,
@@ -17,62 +33,50 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail
-} from "@/components/ui/sidebar";
-import { UserAvatarProfile } from "@/components/user-avatar-profile";
-import { useSession } from "next-auth/react";
-import {
-  IconDeviceGamepad2,
-  IconDotsVertical,
-  IconLogout
-} from "@tabler/icons-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import * as React from "react";
-import { Icons } from "../icons";
-import { signOut } from "next-auth/react";
+  SidebarRail,
+} from "@/components/ui/sidebar"
+import { UserAvatarProfile } from "@/components/user-avatar-profile"
 
 interface NavItem {
-  title: string;
-  url: string;
-  icon: keyof typeof Icons;
+  title: string
+  url: string
+  icon: ReactElement
 }
 
 const navItems: NavItem[] = [
-  { title: "Game", url: "/dashboard/games", icon: "dice2" },
-  { title: "Developer", url: "/dashboard/developers", icon: "userCode" },
-  { title: "Genre", url: "/dashboard/genres", icon: "sphere" },
-  { title: "Platform", url: "/dashboard/platforms", icon: "steam" }
-];
+  { title: "Game", url: "/dashboard/games", icon: <IconDice2 /> },
+  { title: "Developer", url: "/dashboard/developers", icon: <IconUserCode /> },
+  { title: "Genre", url: "/dashboard/genres", icon: <IconSphere /> },
+  { title: "Platform", url: "/dashboard/platforms", icon: <IconSteam /> },
+]
 
 export default function AppSidebar() {
-  const pathname = usePathname();
-  const { data: session } = useSession();
-  const user = session?.user;
+  const pathname = usePathname()
+  const { data: session } = useSession()
+  const user = session?.user
 
   return (
-    <Sidebar collapsible='icon' variant='inset'>
+    <Sidebar collapsible="icon" variant="inset">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className='data-[slot=sidebar-menu-button]:!p-1.5'
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href='#'>
-                <IconDeviceGamepad2 className='!size-5' />
-                <span className='text-base font-semibold'>Game Catalog</span>
+              <a href="#">
+                <IconDeviceGamepad2 className="!size-5" />
+                <span className="text-base font-semibold">Game Catalog</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent className='overflow-x-hidden'>
+      <SidebarContent className="overflow-x-hidden">
         <SidebarGroup>
           <SidebarGroupLabel>Overview</SidebarGroupLabel>
           <SidebarMenu>
             {navItems.map((item) => {
-              const Icon = Icons[item.icon];
               return (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
@@ -81,12 +85,12 @@ export default function AppSidebar() {
                     isActive={pathname === item.url}
                   >
                     <Link href={item.url}>
-                      <Icon />
+                      {item.icon}
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              );
+              )
             })}
           </SidebarMenu>
         </SidebarGroup>
@@ -97,30 +101,30 @@ export default function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
-                  size='lg'
-                  className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
+                  size="lg"
+                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
                   {user && (
                     <UserAvatarProfile
-                      className='h-8 w-8 rounded-lg'
+                      className="h-8 w-8 rounded-lg"
                       showInfo
                       user={user}
                     />
                   )}
-                  <IconDotsVertical className='ml-auto size-4' />
+                  <IconDotsVertical className="ml-auto size-4" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
-                side='bottom'
-                align='end'
+                className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                side="bottom"
+                align="end"
                 sideOffset={4}
               >
-                <DropdownMenuLabel className='p-0 font-normal'>
-                  <div className='px-1 py-1.5'>
+                <DropdownMenuLabel className="p-0 font-normal">
+                  <div className="px-1 py-1.5">
                     {user && (
                       <UserAvatarProfile
-                        className='h-8 w-8 rounded-lg'
+                        className="h-8 w-8 rounded-lg"
                         showInfo
                         user={user}
                       />
@@ -129,7 +133,7 @@ export default function AppSidebar() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => signOut()}>
-                  <IconLogout className='mr-2 h-4 w-4' />
+                  <IconLogout className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -139,5 +143,5 @@ export default function AppSidebar() {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  );
+  )
 }
