@@ -2,14 +2,16 @@ import {
   BaseRecord,
   DataProvider,
   GetListParams,
-  GetListResponse
+  GetListResponse,
 } from "@refinedev/core";
-import simpleRestDataProvider from "@refinedev/simple-rest";
+import simpleRestDataProvider, { axiosInstance } from "@refinedev/simple-rest";
+import { AxiosInstance } from "axios";
 
 export const springDataProvider = (
-  apiUrl: string
+  apiUrl: string,
+  httpClient: AxiosInstance = axiosInstance
 ): Omit<Required<DataProvider>, "createMany" | "updateMany" | "deleteMany"> => {
-  const delegate = simpleRestDataProvider(apiUrl);
+  const delegate = simpleRestDataProvider(apiUrl, httpClient);
   return {
     ...delegate,
     getList: async <TData extends BaseRecord = BaseRecord>(
@@ -26,20 +28,20 @@ export const springDataProvider = (
           headers,
           query: {
             page: currentPage - 1,
-            size: pageSize
-          }
+            size: pageSize,
+          },
         }),
         delegate.custom({
           url: `${url}/count`,
           method,
-          headers
-        })
+          headers,
+        }),
       ]);
 
       return {
         data: result.data as TData[],
-        total: total.data as never as number
+        total: total.data as never as number,
       };
-    }
+    },
   };
 };

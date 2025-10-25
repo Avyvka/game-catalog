@@ -13,6 +13,8 @@ import { ReactNode } from "react"
 
 import { ActiveThemeProvider } from "@/components/active-theme"
 import { ThemeProvider } from "@/components/theme-provider"
+import { auth } from "@/auth";
+import { useSession } from "next-auth/react";
 
 const META_THEME_COLORS = {
   light: "#ffffff",
@@ -24,11 +26,12 @@ export const metadata: Metadata = {
   description: "Game Catalog",
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode
 }>) {
+  const session = await auth();
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -58,7 +61,7 @@ export default function RootLayout({
         <NextTopLoader color="var(--primary)" showSpinner={false} />
         <ThemeProvider>
           <ActiveThemeProvider initialTheme="blue">
-            <Providers>
+            <Providers session={session}>
               <Toaster position="top-center" />
               {children}
             </Providers>

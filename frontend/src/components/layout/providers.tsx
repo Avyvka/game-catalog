@@ -1,33 +1,85 @@
-"use client"
+"use client";
 
-import React from "react"
-import { springDataProvider } from "@/shared/data-provider"
-import { Refine } from "@refinedev/core"
-import { SessionProvider } from "next-auth/react"
+import React, { useEffect } from "react";
+import { springDataProvider } from "@/shared/data-provider";
+import { HttpError, Refine } from "@refinedev/core";
+import axios from "axios";
+import { Session } from "next-auth";
+import { SessionProvider, useSession } from "next-auth/react";
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({
+  children,
+  session,
+}: {
+  children: React.ReactNode;
+  session?: Session | null | undefined;
+}) {
   return (
     <>
-      <SessionProvider>
-        <Refine
-          dataProvider={springDataProvider("/api/v1")}
-          options={{
-            reactQuery: {
-              clientConfig: {
-                defaultOptions: {
-                  queries: {
-                    staleTime: 60_000,
-                    refetchOnWindowFocus: false,
-                    refetchOnReconnect: false,
-                  },
-                },
-              },
-            },
-          }}
-        >
-          {children}
-        </Refine>
+      <SessionProvider session={session}>
+        <RefineProvider>{children}</RefineProvider>
       </SessionProvider>
     </>
-  )
+  );
+}
+
+const axiosInstance = axios.create();
+
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    const customError: HttpError = {
+      ...error,
+      message: error.response?.data?.message,
+      statusCode: error.response?.status,
+    };
+
+    return Promise.reject(customError);
+  }
+);
+
+function RefineProvider({ children }: { children: React.ReactNode }) {
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    const interceptor = axiosInstance.interceptors.request.use(
+      (config) => {
+        if (!config.headers.Authorization && session?.accessToken) {
+          config.headers.Authorization = `Bearer ${session.accessToken}`;
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
+
+    return () => {
+      axiosInstance.interceptors.request.eject(interceptor);
+    };
+  }, [session]);
+
+  return (
+    <Refine
+      dataProvider={springDataProvider(
+        `${process.env.NEXT_PUBLIC_API_URL}`,
+        axiosInstance
+      )}
+      options={{
+        reactQuery: {
+          clientConfig: {
+            defaultOptions: {
+              queries: {
+                staleTime: 60_000,
+                refetchOnWindowFocus: false,
+                refetchOnReconnect: false,
+              },
+            },
+          },
+        },
+      }}
+    >
+      {children}
+    </Refine>
+  );
 }
