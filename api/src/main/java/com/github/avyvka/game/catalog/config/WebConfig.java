@@ -1,23 +1,19 @@
 package com.github.avyvka.game.catalog.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.ReactivePageableHandlerMethodArgumentResolver;
-import org.springframework.web.reactive.config.CorsRegistry;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.result.method.annotation.ArgumentResolverConfigurer;
-import reactor.util.annotation.NonNull;
-
-import java.util.Optional;
 
 @Configuration
 @EnableConfigurationProperties(CorsMappingsProperties.class)
 public class WebConfig implements WebFluxConfigurer {
-
-    @Autowired
-    CorsMappingsProperties corsMappingsProperties;
 
     @Override
     public void configureArgumentResolvers(ArgumentResolverConfigurer configurer) {
@@ -26,21 +22,30 @@ public class WebConfig implements WebFluxConfigurer {
         configurer.addCustomResolver(reactivePageableHandlerMethodArgumentResolver);
     }
 
-    @Override
-    public void addCorsMappings(@NonNull CorsRegistry registry) {
-        corsMappingsProperties.getMappings().forEach((_, p) -> {
-            var mapping = registry.addMapping(p.getPattern());
+    @Bean
+    @ConditionalOnProperty("spring.webflux.cors.enabled")
+    UrlBasedCorsConfigurationSource corsConfigurationSource(CorsMappingsProperties corsMappingsProperties) {
+        var registry = new UrlBasedCorsConfigurationSource();
 
-            Optional.ofNullable(p.getAllowedOrigins())
-                    .ifPresent(e -> mapping.allowedOrigins(e.toArray(String[]::new)));
+        if (corsMappingsProperties.getMappings() != null) {
+            corsMappingsProperties.getMappings().forEach((_, mapping) -> {
+                var cors = new CorsConfiguration();
+                if (mapping.getAllowedOrigins() != null) {
+                    cors.setAllowedOrigins(mapping.getAllowedOrigins());
+                }
+                if (mapping.getAllowedMethods() != null) {
+                    cors.setAllowedMethods(mapping.getAllowedMethods());
+                }
+                if (mapping.getAllowedHeaders() != null) {
+                    cors.setAllowedHeaders(mapping.getAllowedHeaders());
+                }
+                if (mapping.getAllowCredentials() != null) {
+                    cors.setAllowCredentials(mapping.getAllowCredentials());
+                }
+                registry.registerCorsConfiguration(mapping.getPattern(), cors);
+            });
+        }
 
-            Optional.ofNullable(p.getAllowedMethods())
-                    .ifPresent(e -> mapping.allowedMethods(e.toArray(String[]::new)));
-
-            Optional.ofNullable(p.getAllowedHeaders())
-                    .ifPresent(e -> mapping.allowedHeaders(e.toArray(String[]::new)));
-
-            Optional.ofNullable(p.getAllowCredentials()).ifPresent(mapping::allowCredentials);
-        });
+        return registry;
     }
 }
