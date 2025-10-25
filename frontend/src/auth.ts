@@ -1,31 +1,21 @@
 import NextAuth from "next-auth";
 import "next-auth/jwt";
 import { JWT } from "@auth/core/jwt";
+import Keycloak, { KeycloakProfile } from "next-auth/providers/keycloak";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
-    {
-      type: "oidc",
-      id: "casdoor",
-      name: "Casdoor",
-      clientId: process.env.CASDOOR_CLIENT_ID!,
-      clientSecret: process.env.CASDOOR_CLIENT_SECRET!,
-      authorization: {
-        url: `${process.env.CASDOOR_BASE_URL}/login/oauth/authorize`,
-        params: { scope: "profile email openid" }
-      },
-      token: `${process.env.CASDOOR_BASE_URL}/api/login/oauth/access_token`,
-      userinfo: `${process.env.CASDOOR_BASE_URL}/api/userinfo`,
-      issuer: `${process.env.CASDOOR_BASE_URL}`,
-      profile(profile) {
-        return {
-          id: profile.id,
-          name: profile.name,
-          email: profile.email,
-          image: profile.avatar
-        };
-      }
-    }
+    Keycloak({
+      clientId: process.env.KEYCLOAK_CLIENT_ID,
+      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
+      issuer: process.env.KEYCLOAK_ISSUER,
+      profile: (profile: KeycloakProfile) => ({
+        id: profile.sub,
+        email: profile.email,
+        name: profile.preferred_username,
+        image: profile.picture,
+      }),
+    }),
   ],
   callbacks: {
     jwt({ token, account }) {
@@ -34,7 +24,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           ...token,
           accessToken: account.access_token,
           expiresAt: account.expires_at,
-          refreshToken: account.refresh_token
+          refreshToken: account.refresh_token,
         };
       } else if (token.expiresAt && Date.now() < token.expiresAt * 1000) {
         return token;
@@ -44,8 +34,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     session({ session, token }) {
       return { ...session, accessToken: token.accessToken, error: token.error };
-    }
-  }
+    },
+  },
 });
 
 async function refreshToken(token: JWT): Promise<JWT | null> {
@@ -63,8 +53,8 @@ async function refreshToken(token: JWT): Promise<JWT | null> {
           client_id: process.env.CASDOOR_CLIENT_ID!,
           client_secret: process.env.CASDOOR_CLIENT_SECRET!,
           grant_type: "refresh_token",
-          refresh_token: token.refreshToken!
-        })
+          refresh_token: token.refreshToken!,
+        }),
       }
     );
 
@@ -84,7 +74,7 @@ async function refreshToken(token: JWT): Promise<JWT | null> {
       ...token,
       accessToken: newTokens.access_token,
       expiresAt: Math.floor(Date.now() / 1000 + newTokens.expires_in),
-      refreshToken: newTokens.refresh_token || token.refreshToken
+      refreshToken: newTokens.refresh_token || token.refreshToken,
     };
   } catch (error) {
     console.error("Error refreshing access_token", error);
