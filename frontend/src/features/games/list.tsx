@@ -1,41 +1,41 @@
-"use client"
+"use client";
 
-import React from "react"
-import { Developer, Game, Genre, Platform } from "@/entities"
-import { useDelete, useSelect } from "@refinedev/core"
-import { useModalForm } from "@refinedev/react-hook-form"
-import { UseModalFormReturnType } from "@refinedev/react-hook-form/"
-import { useTable } from "@refinedev/react-table"
-import { IconPencil, IconPlus, IconTrash } from "@tabler/icons-react"
-import { ColumnDef } from "@tanstack/react-table"
-import { Controller } from "react-hook-form"
+import React from "react";
+import { Developer, Game, Genre, Platform } from "@/entities";
+import { useDelete, useSelect } from "@refinedev/core";
+import { useModalForm } from "@refinedev/react-hook-form";
+import { UseModalFormReturnType } from "@refinedev/react-hook-form/";
+import { useTable } from "@refinedev/react-table";
+import { IconPencil, IconPlus, IconTrash } from "@tabler/icons-react";
+import { ColumnDef } from "@tanstack/react-table";
+import { Controller } from "react-hook-form";
 
-import { cn } from "@/lib/utils"
-import { useIsMobile } from "@/hooks/use-mobile"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerClose,
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
-} from "@/components/ui/drawer"
-import { Field, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/drawer";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import {
   Item,
   ItemContent,
   ItemDescription,
   ItemTitle,
-} from "@/components/ui/item"
+} from "@/components/ui/item";
 import {
   MultiSelect,
   MultiSelectContent,
@@ -43,16 +43,16 @@ import {
   MultiSelectItem,
   MultiSelectTrigger,
   MultiSelectValue,
-} from "@/components/ui/multi-select"
+} from "@/components/ui/multi-select";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Error, RefineTable } from "@/components/table/refine-table"
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Error, RefineTable } from "@/components/table/refine-table";
 
 export default function GameList() {
   const viewForm = useModalForm<Game>({
@@ -60,23 +60,23 @@ export default function GameList() {
       resource: "games",
       action: "edit",
     },
-  })
+  });
 
   const createForm = useModalForm<Game>({
     refineCoreProps: {
       resource: "games",
       action: "create",
     },
-  })
+  });
 
   const editForm = useModalForm<Game>({
     refineCoreProps: {
       resource: "games",
       action: "edit",
     },
-  })
+  });
 
-  const { mutate: deleteMutate } = useDelete<Game>({})
+  const { mutate: deleteMutate } = useDelete<Game>({});
 
   const columns: ColumnDef<Game>[] = [
     { id: "id", accessorKey: "id", header: "Id", size: 400 },
@@ -110,7 +110,7 @@ export default function GameList() {
             variant="ghost"
             size="icon"
             onClick={() => {
-              deleteMutate({ resource: "games", id: row.original.id })
+              deleteMutate({ resource: "games", id: row.original.id });
             }}
           >
             <IconTrash className="text-red-400" />
@@ -119,7 +119,7 @@ export default function GameList() {
       ),
       size: 100,
     },
-  ]
+  ];
 
   const tableProps = useTable({
     columns,
@@ -140,16 +140,16 @@ export default function GameList() {
         },
       ],
     },
-  })
+  });
 
   const {
     refineCore: {
       tableQuery: { error, refetch },
     },
-  } = tableProps
+  } = tableProps;
 
   if (error) {
-    return <Error message={error.message} onRetry={refetch} />
+    return <Error message={error.message} onRetry={refetch} />;
   }
 
   return (
@@ -165,7 +165,7 @@ export default function GameList() {
       <DialogForm form={createForm} />
       <DialogForm form={editForm} />
     </div>
-  )
+  );
 }
 
 function DialogForm({ form }: { form: UseModalFormReturnType<Game> }) {
@@ -177,7 +177,7 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Game> }) {
     saveButtonProps,
     formState: { defaultValues },
     setValue,
-  } = form
+  } = form;
 
   const { options: developerOptions, query: developerQuery } =
     useSelect<Developer>({
@@ -188,7 +188,7 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Game> }) {
       queryOptions: {
         enabled: modal.visible,
       },
-    })
+    });
 
   const { options: genreOptions, query: genreQuery } = useSelect<Genre>({
     resource: "genres",
@@ -198,7 +198,7 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Game> }) {
     queryOptions: {
       enabled: modal.visible,
     },
-  })
+  });
 
   const { options: platformOptions, query: platformQuery } =
     useSelect<Platform>({
@@ -209,19 +209,19 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Game> }) {
       queryOptions: {
         enabled: modal.visible,
       },
-    })
+    });
 
   React.useEffect(() => {
     if (defaultValues?.developer) {
-      setValue("developer", defaultValues.developer)
+      setValue("developer", defaultValues.developer);
     }
-  }, [defaultValues, setValue])
+  }, [defaultValues, setValue]);
 
   const isLoading =
     formLoading ||
     developerQuery.isLoading ||
     genreQuery.isLoading ||
-    platformQuery.isLoading
+    platformQuery.isLoading;
 
   return (
     <Dialog open={modal.visible} onOpenChange={modal.close}>
@@ -311,8 +311,8 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Game> }) {
                     onValuesChange={(values) => {
                       const selected = genreOptions
                         .filter((opt) => values.includes(opt.value))
-                        .map((opt) => ({ id: opt.value }))
-                      field.onChange(selected)
+                        .map((opt) => ({ id: opt.value }));
+                      field.onChange(selected);
                     }}
                   >
                     <MultiSelectTrigger className="w-full">
@@ -352,8 +352,8 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Game> }) {
                     onValuesChange={(values) => {
                       const selected = platformOptions
                         .filter((opt) => values.includes(opt.value))
-                        .map((opt) => ({ id: opt.value }))
-                      field.onChange(selected)
+                        .map((opt) => ({ id: opt.value }));
+                      field.onChange(selected);
                     }}
                   >
                     <MultiSelectTrigger className="w-full">
@@ -388,16 +388,17 @@ function DialogForm({ form }: { form: UseModalFormReturnType<Game> }) {
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
 function DrawerForm({ form }: { form: UseModalFormReturnType<Game> }) {
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
   const {
     modal,
+    refineCore: { formLoading },
     formState: { defaultValues },
-  } = form
-  const game = defaultValues as Game | null
+  } = form;
+  const game = defaultValues as Game | null;
   return (
     <Drawer
       open={modal.visible}
@@ -412,51 +413,69 @@ function DrawerForm({ form }: { form: UseModalFormReturnType<Game> }) {
         <Item>
           <ItemContent>
             <ItemTitle>Game Id</ItemTitle>
-            <ItemDescription>{game?.id}</ItemDescription>
+            <ItemDescription>
+              {formLoading ? <Skeleton className="h-4 w-70" /> : game?.id}
+            </ItemDescription>
           </ItemContent>
         </Item>
         <Item>
           <ItemContent>
             <ItemTitle>Name</ItemTitle>
-            <ItemDescription>{game?.name}</ItemDescription>
+            <ItemDescription>
+              {formLoading ? <Skeleton className="h-4 w-50" /> : game?.name}
+            </ItemDescription>
           </ItemContent>
         </Item>
         <Item>
           <ItemContent>
             <ItemTitle>Developer</ItemTitle>
-            <ItemDescription>{game?.developer.name}</ItemDescription>
+            <ItemDescription>
+              {formLoading ? (
+                <Skeleton className="h-4 w-60" />
+              ) : (
+                game?.developer.name
+              )}
+            </ItemDescription>
           </ItemContent>
         </Item>
         <Item>
           <ItemContent>
             <ItemTitle>Genres</ItemTitle>
-            <div className={"flex flex-wrap gap-1"}>
-              {game?.genres &&
-                game?.genres.map((genre) => (
-                  <Badge
-                    key={genre.id}
-                    className={`${getColorByString(genre.name)}`}
-                  >
-                    {genre.name}
-                  </Badge>
-                ))}
-            </div>
+            {formLoading ? (
+              <Skeleton className="h-8 w-full" />
+            ) : (
+              <div className={"flex flex-wrap gap-1"}>
+                {game?.genres &&
+                  game?.genres.map((genre) => (
+                    <Badge
+                      key={genre.id}
+                      className={`${getColorByString(genre.name)}`}
+                    >
+                      {genre.name}
+                    </Badge>
+                  ))}
+              </div>
+            )}
           </ItemContent>
         </Item>
         <Item>
           <ItemContent>
             <ItemTitle>Platforms</ItemTitle>
-            <div className={"flex flex-wrap gap-1"}>
-              {game?.platforms &&
-                game?.platforms.map((platform) => (
-                  <Badge
-                    key={platform.id}
-                    className={`${getColorByString(platform.name)}`}
-                  >
-                    {platform.name}
-                  </Badge>
-                ))}
-            </div>
+            {formLoading ? (
+              <Skeleton className="h-8 w-full" />
+            ) : (
+              <div className={"flex flex-wrap gap-1"}>
+                {game?.platforms &&
+                  game?.platforms.map((platform) => (
+                    <Badge
+                      key={platform.id}
+                      className={`${getColorByString(platform.name)}`}
+                    >
+                      {platform.name}
+                    </Badge>
+                  ))}
+              </div>
+            )}
           </ItemContent>
         </Item>
         <DrawerFooter>
@@ -466,7 +485,7 @@ function DrawerForm({ form }: { form: UseModalFormReturnType<Game> }) {
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }
 
 function getColorByString(str: string) {
@@ -493,11 +512,11 @@ function getColorByString(str: string) {
     "bg-fuchsia-600",
     "bg-pink-600",
     "bg-rose-600",
-  ]
-  let hash = 0
+  ];
+  let hash = 0;
   for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash)
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
-  const index = Math.abs(hash) % colors.length
-  return colors[index]
+  const index = Math.abs(hash) % colors.length;
+  return colors[index];
 }
