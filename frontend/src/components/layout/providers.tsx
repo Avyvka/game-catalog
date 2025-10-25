@@ -10,14 +10,16 @@ import { SessionProvider, useSession } from "next-auth/react";
 export default function Providers({
   children,
   session,
+  apiUrl
 }: {
   children: React.ReactNode;
+  apiUrl: string;
   session?: Session | null | undefined;
 }) {
   return (
     <>
       <SessionProvider session={session}>
-        <RefineProvider>{children}</RefineProvider>
+        <RefineProvider apiUrl={apiUrl}>{children}</RefineProvider>
       </SessionProvider>
     </>
   );
@@ -40,7 +42,13 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-function RefineProvider({ children }: { children: React.ReactNode }) {
+function RefineProvider({
+  children,
+  apiUrl,
+}: {
+  children: React.ReactNode;
+  apiUrl: string;
+}) {
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -61,10 +69,7 @@ function RefineProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <Refine
-      dataProvider={springDataProvider(
-        `${process.env.NEXT_PUBLIC_API_URL}`,
-        axiosInstance
-      )}
+      dataProvider={springDataProvider(apiUrl, axiosInstance)}
       options={{
         reactQuery: {
           clientConfig: {

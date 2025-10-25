@@ -1,35 +1,34 @@
-import type { Metadata } from "next"
-import NextTopLoader from "nextjs-toploader"
+import type { Metadata } from "next";
+import NextTopLoader from "nextjs-toploader";
 
-import { fontVariables } from "@/lib/font"
-import { cn } from "@/lib/utils"
-import { Toaster } from "@/components/ui/sonner"
-import Providers from "@/components/layout/providers"
+import { fontVariables } from "@/lib/font";
+import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
+import Providers from "@/components/layout/providers";
 
-import "./globals.css"
-import "./theme.css"
+import "./globals.css";
+import "./theme.css";
 
-import { ReactNode } from "react"
-
-import { ActiveThemeProvider } from "@/components/active-theme"
-import { ThemeProvider } from "@/components/theme-provider"
+import { ReactNode } from "react";
 import { auth } from "@/auth";
-import { useSession } from "next-auth/react";
+
+import { ActiveThemeProvider } from "@/components/active-theme";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const META_THEME_COLORS = {
   light: "#ffffff",
   dark: "#09090b",
-}
+};
 
 export const metadata: Metadata = {
   title: "Game Catalog",
   description: "Game Catalog",
-}
+};
 
 export default async function RootLayout({
   children,
 }: Readonly<{
-  children: ReactNode
+  children: ReactNode;
 }>) {
   const session = await auth();
   return (
@@ -61,7 +60,7 @@ export default async function RootLayout({
         <NextTopLoader color="var(--primary)" showSpinner={false} />
         <ThemeProvider>
           <ActiveThemeProvider initialTheme="blue">
-            <Providers session={session}>
+            <Providers session={session} apiUrl={process.env.API_URL!}>
               <Toaster position="top-center" />
               {children}
             </Providers>
@@ -69,5 +68,5 @@ export default async function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
