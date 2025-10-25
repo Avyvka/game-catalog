@@ -45,13 +45,13 @@ async function refreshToken(token: JWT): Promise<JWT | null> {
 
   try {
     const response = await fetch(
-      `${process.env.CASDOOR_BASE_URL}/api/login/oauth/refresh_token`,
+      `${process.env.AUTH_KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
       {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
-          client_id: process.env.CASDOOR_CLIENT_ID!,
-          client_secret: process.env.CASDOOR_CLIENT_SECRET!,
+          client_id: process.env.AUTH_KEYCLOAK_ID!,
+          client_secret: process.env.AUTH_KEYCLOAK_SECRET!,
           grant_type: "refresh_token",
           refresh_token: token.refreshToken!,
         }),
