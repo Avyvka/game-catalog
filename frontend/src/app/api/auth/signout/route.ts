@@ -16,6 +16,8 @@ export async function POST(request: NextRequest) {
         `?id_token_hint=${encodeURIComponent(token.idToken)}`
     );
 
+    console.log(providerResponse);
+
     if (!providerResponse.ok) {
       throw providerResponse;
     }
