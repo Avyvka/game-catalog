@@ -10,7 +10,7 @@ import { SessionProvider, useSession } from "next-auth/react";
 export default function Providers({
   children,
   session,
-  apiUrl
+  apiUrl,
 }: {
   children: React.ReactNode;
   apiUrl: string;
@@ -49,12 +49,16 @@ function RefineProvider({
   children: React.ReactNode;
   apiUrl: string;
 }) {
-  const { data: session } = useSession();
+  const { data: session } = useSession({ required: true });
 
   useEffect(() => {
     const interceptor = axiosInstance.interceptors.request.use(
       (config) => {
-        if (!config.headers.Authorization && session?.accessToken) {
+        if (
+          !config.headers.Authorization &&
+          session &&
+          "accessToken" in session
+        ) {
           config.headers.Authorization = `Bearer ${session.accessToken}`;
         }
         return config;
