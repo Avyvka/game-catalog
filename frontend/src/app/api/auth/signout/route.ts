@@ -24,6 +24,8 @@ export async function POST(request: NextRequest) {
       }
     );
 
+    console.log(providerResponse);
+
     if (!providerResponse.ok) {
       throw providerResponse;
     }
