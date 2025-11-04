@@ -19,7 +19,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
-        console.log(`account: ${typeof account.refresh_token === "string"}`)
         return {
           ...token,
           accessToken: account.access_token,
@@ -30,12 +29,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         typeof token.expiresAt === "number" &&
         Date.now() < token.expiresAt * 1000
       ) {
-        console.log(`token: ${typeof token.refreshToken === "string"}`)
         return token;
       } else {
         try {
           return await refreshToken(token);
-        } catch {
+        } catch(error) {
+          console.error(error);
           return null;
         }
       }
@@ -78,9 +77,6 @@ async function refreshToken(token: JWT): Promise<JWT> {
     expires_in: number;
     refresh_token?: string;
   };
-
-  console.log(`old_token: ${typeof token.refreshToken === "string"}`)
-  console.log(`new_token: ${typeof newTokens.refresh_token === "string"}`)
 
   return {
     ...token,

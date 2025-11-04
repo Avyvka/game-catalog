@@ -6,9 +6,8 @@ export async function POST(request: NextRequest) {
   const token = await getToken({
     req: request,
     secret: process.env.AUTH_SECRET,
+    secureCookie: resolveProtocol(request) === "https",
   });
-
-  console.log(token);
 
   const result = await handlers.POST(request);
 
@@ -26,12 +25,21 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    console.log(providerResponse);
-
     if (!providerResponse.ok) {
       throw providerResponse;
     }
   }
 
   return result;
+}
+
+function resolveProtocol(request: NextRequest) {
+  const headers =
+    request.headers instanceof Headers
+      ? request.headers
+      : new Headers(request.headers);
+
+  const proto = headers.get("x-forwarded-proto") || request.nextUrl.protocol;
+
+  return proto.split(":")[0].toLowerCase();
 }
