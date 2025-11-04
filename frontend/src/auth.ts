@@ -21,7 +21,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (account) {
         return {
           ...token,
-          idToken: account.id_token,
           accessToken: account.access_token,
           expiresAt: account.expires_at,
           refreshToken: account.refresh_token,

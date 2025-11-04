@@ -10,13 +10,19 @@ export async function POST(request: NextRequest) {
 
   const result = await handlers.POST(request);
 
-  if (typeof token?.idToken === "string") {
+  if (typeof token?.refreshToken === "string") {
     const providerResponse = await fetch(
-      `${process.env.AUTH_KEYCLOAK_ISSUER}/protocol/openid-connect/logout` +
-        `?id_token_hint=${encodeURIComponent(token.idToken)}`
+      `${process.env.AUTH_KEYCLOAK_ISSUER}/protocol/openid-connect/logout`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          client_id: process.env.AUTH_KEYCLOAK_ID!,
+          client_secret: process.env.AUTH_KEYCLOAK_SECRET!,
+          refresh_token: token.refreshToken,
+        }),
+      }
     );
-
-    console.log(providerResponse);
 
     if (!providerResponse.ok) {
       throw providerResponse;
