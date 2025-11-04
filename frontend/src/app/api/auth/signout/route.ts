@@ -8,6 +8,8 @@ export async function POST(request: NextRequest) {
     secret: process.env.AUTH_SECRET,
   });
 
+  console.log(typeof token?.refreshToken === "string");
+
   const result = await handlers.POST(request);
 
   if (typeof token?.refreshToken === "string") {
